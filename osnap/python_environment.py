@@ -38,11 +38,16 @@ def add_packages(requirements, verbose=False):
 
 
 def unpack_launcher(verbose=False):
-    if verbose:
-        print('unpacking launcher')
     zip_file = osnap.util.get_launch_name() + '.zip'
     launch_name = osnap.util.get_launch_name()
 
+    if os.path.exists(launch_name):
+        if verbose:
+            print('removing directory : %s' % launch_name)
+        shutil.rmtree(launch_name)
+
+    if verbose:
+        print('unpacking %s' % launch_name)
     with open(zip_file, 'wb') as out_file:
         if osnap.util.is_windows():
             launch_code = osnap.launchwin.launchwin
@@ -54,10 +59,15 @@ def unpack_launcher(verbose=False):
     shutil.unpack_archive(zip_file, launch_name)
 
     # make launcher executable
+    if verbose:
+        print('making %s executable' % launch_name)
     mod = 0o755
     for root, dirs, files in os.walk(launch_name):
         for dir in dirs:
             os.chmod(os.path.join(root, dir), mod)
         for f in files:
             os.chmod(os.path.join(root, f), mod)
+
+    if verbose:
+        print('cleanup : removing %s' % zip_file)
     os.remove(zip_file)
