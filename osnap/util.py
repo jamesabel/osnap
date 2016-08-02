@@ -31,16 +31,6 @@ def get_launch_name():
     return 'launch' + get_os_name()
 
 
-#def get_sys_path_mac(base):
-#    sys_path = [base,
-#                os.path.join(base, osnap.const.python_folder, 'Frameworks/Python.framework/Versions/3.5/lib/python35.zip'),
-#                os.path.join(base, osnap.const.python_folder, 'Frameworks/Python.framework/Versions/3.5/lib/python3.5'),
-#                os.path.join(base, osnap.const.python_folder, 'Frameworks/Python.framework/Versions/3.5/lib/python3.5/plat-darwin'),
-#                os.path.join(base, osnap.const.python_folder, 'Frameworks/Python.framework/Versions/3.5/lib/python3.5/lib-dynload'),
-#                os.path.join(base, osnap.const.python_folder, 'Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages')]
-#    return sys_path
-
-
 def make_dir(path, remove, verbose):
     if remove and os.path.exists(path):
         if verbose:

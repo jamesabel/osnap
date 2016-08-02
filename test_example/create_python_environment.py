@@ -15,7 +15,7 @@ def create_python_environment(verbose):
         raise NotImplementedError
 
     osnap.python_environment.create_python(python_version, verbose=verbose)
-    osnap.python_environment.add_packages(['cryptography', 'PyQt5'], verbose=verbose)
+    osnap.python_environment.add_packages(['appdirs', 'cryptography', 'PyQt5'], verbose=verbose)
     osnap.python_environment.unpack_launcher(verbose=verbose)
 
 if __name__ == '__main__':

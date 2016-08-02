@@ -3,6 +3,7 @@ import fnmatch
 import py_compile
 import os
 import shutil
+import distutils.dir_util
 
 import osnap.util
 
@@ -22,8 +23,11 @@ def create_installer(author, application_name, description='', url='', project_p
 
     # copy over launcher
     dist_dir = 'dist'
-    shutil.rmtree(dist_dir)
-    print('stopped here - need to create the installer in a .py first')
+    try:
+        shutil.rmtree(dist_dir)
+    except FileNotFoundError:
+        pass
+    os.mkdir(dist_dir)
 
     # If the user has been using osnap's python, you shouldn't have to compile the code here, which keeps the
     # distribution size smaller.  However, just in case the installed program is having an issue with non-compiled
@@ -37,6 +41,15 @@ def create_installer(author, application_name, description='', url='', project_p
                 # special case: don't compile Python 2 code from PyQt
                 if 'port_v2' not in path:
                     py_compile.compile(path)
+
+    for d in ['application', osnap.const.python_folder]:
+        distutils.dir_util.copy_tree(d, os.path.join(dist_dir, d))
+    distutils.dir_util.copy_tree(os.path.join(osnap.util.get_launch_name()), dist_dir)
+    for f in ['main.py']:
+        shutil.copy2(f, dist_dir)
+
+    print('stopped here')
+    return
 
     if osnap.util.is_windows():
         osnap.installer_win.create_installer_win(author, application_name, description, url, project_packages, verbose)

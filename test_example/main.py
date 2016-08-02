@@ -3,15 +3,26 @@
 
 import sys
 import logging
+import appdirs
+import os
 
-import mypackage.mymodule
+import application.mymodule
 
+APPLICATION_NAME = 'test_example'
+AUTHOR = 'test'
 
 def main():
 
     # set up logger like any normal GUI application
-    logger = logging.getLogger('test_example')
-    file_handler = logging.FileHandler('test_example.log')
+    logger = logging.getLogger(APPLICATION_NAME)
+
+    log_folder = appdirs.user_log_dir(APPLICATION_NAME, AUTHOR)
+    if not os.path.exists(log_folder):
+        os.makedirs(log_folder)
+    log_file_path = os.path.join(log_folder, 'launch.log')
+    print(log_file_path)
+
+    file_handler = logging.FileHandler(log_file_path)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
@@ -22,7 +33,7 @@ def main():
     logger.info('sys.path : %s' % str(sys.path))
 
     # run my application
-    mypackage.mymodule.run()
+    application.mymodule.run()
 
 if __name__ == '__main__':
     main()
