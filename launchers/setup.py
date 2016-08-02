@@ -8,7 +8,8 @@ if util.is_mac():
     from setuptools import setup
     setup(
         app=[APP],
-        options={'py2app': {'dist_dir': util.get_launch_name()}},
+        options={'py2app': {'dist_dir': util.get_launch_name(),
+                            'iconfile': 'circle.icns'}},
         setup_requires=['py2app'],
     )
 elif util.is_windows():
