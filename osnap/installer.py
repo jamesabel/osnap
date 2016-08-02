@@ -4,13 +4,11 @@ import py_compile
 import os
 import shutil
 import distutils.dir_util
-
+import time
 import osnap.util
 
 if osnap.util.is_windows():
     import osnap.installer_win
-if osnap.util.is_mac():
-    import osnap.installer_mac
 import osnap.util
 import osnap.const
 import osnap.write_timestamp
@@ -21,12 +19,17 @@ def create_installer(author, application_name, description='', url='', project_p
 
     osnap.write_timestamp.write_timestamp()
 
-    # copy over launcher
     dist_dir = 'dist'
-    try:
-        shutil.rmtree(dist_dir)
-    except FileNotFoundError:
-        pass
+    # fancy rmtree, since for some reason shutil.rmtree can return before the tree is actually removed
+    count = 0
+    while os.path.exists(dist_dir) and count < 100:
+        try:
+            shutil.rmtree(dist_dir)
+        except FileNotFoundError:
+            pass
+        except IOError:
+            time.sleep(1)
+        count += 1
     os.mkdir(dist_dir)
 
     # If the user has been using osnap's python, you shouldn't have to compile the code here, which keeps the
@@ -42,18 +45,14 @@ def create_installer(author, application_name, description='', url='', project_p
                 if 'port_v2' not in path:
                     py_compile.compile(path)
 
-    for d in ['application', osnap.const.python_folder]:
-        distutils.dir_util.copy_tree(d, os.path.join(dist_dir, d))
-    distutils.dir_util.copy_tree(os.path.join(osnap.util.get_launch_name()), dist_dir)
-    for f in ['main.py']:
-        shutil.copy2(f, dist_dir)
-
-    print('stopped here')
-    return
-
-    if osnap.util.is_windows():
-        osnap.installer_win.create_installer_win(author, application_name, description, url, project_packages, verbose)
-    elif osnap.util.is_mac():
-        osnap.installer_mac.create_installer_mac(author, application_name, description, url, project_packages, verbose)
-    else:
+    if osnap.util.is_mac():
+        macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
+        for d in ['application', osnap.const.python_folder]:
+            # todo: get launch.app from somewhere programmatic
+            distutils.dir_util.copy_tree(d, os.path.join(macos_dir, d))
+        distutils.dir_util.copy_tree(os.path.join(osnap.util.get_launch_name()), dist_dir)
+        for f in ['main.py']:
+            shutil.copy2(f, macos_dir)
+    elif osnap.util.is_windows():
         raise NotImplementedError
+

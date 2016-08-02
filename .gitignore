@@ -143,7 +143,6 @@ fabric.properties
 
 # JCA
 repo_ignore
-repo_ignore/*
 venv
 temp
 history
@@ -172,4 +171,6 @@ launchers/launchwin
 test_example/launchmac
 test_example/launchwin
 .eggs
+*.dmg
+.DS_Store
 

@@ -1,15 +1,19 @@
 
 # the test/example application
 
+# must be called "main.py" so that it get bundled and launched correctly
+
 import sys
 import logging
 import appdirs
 import os
 
+# must be called "application" so that it get bundled correctly
 import application.mymodule
 
 APPLICATION_NAME = 'test_example'
-AUTHOR = 'test'
+AUTHOR = 'test_author'
+
 
 def main():
 

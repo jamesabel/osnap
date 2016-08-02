@@ -44,13 +44,22 @@ def launch():
     # go up directory levels until we find our python interpreter
     # this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
     shortest_path_string = 5  # tolerate all OS, e.g. c:\, /, etc.
-    while not os.path.exists(python_folder) and len(os.getcwd()) > shortest_path_string:
-        try:
-            os.chdir('..')
-            logger.info('looking for %s at cwd : %s' % (python_path, os.getcwd()))
-        except IOError:
-            logger.error('IOError : while looking for %s in %s' % (python_folder, os.getcwd()))
-            break
+    while len(os.getcwd()) > shortest_path_string:
+        logger.info('looking for %s at cwd : %s' % (python_path, os.getcwd()))
+
+        # special case for MacOS since the .app cwd starts in Contents/Resources
+        mac_os = 'MacOS'
+        if os.path.exists(mac_os):
+            os.chdir(mac_os)
+        else:
+            if os.path.exists(python_folder):
+                logger.info('%s found at %s' % (python_folder, os.getcwd()))
+                break
+            try:
+                os.chdir('..')
+            except IOError:
+                logger.error('IOError : while looking for %s in %s' % (python_folder, os.getcwd()))
+                break
 
     if os.path.exists(python_path):
         call_parameters = [python_path, program]
