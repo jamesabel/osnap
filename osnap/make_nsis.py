@@ -79,14 +79,17 @@ class MakeNSIS:
         self.write_line('# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)')
         self.write_line('setOutPath $INSTDIR')
         self.write_line('# Files added here should be removed by the uninstaller (see section "uninstall")')
-        self.write_line('file /r ' + osnap.const.python_folder)
-        for project_package in self.project_packages:
-            self.write_line('file /r ' + project_package)
-        self.write_line('file "*.ico"')
-        self.write_line('file ${EXENAME}')
-        self.write_line('file main.py')
-        self.write_line('file "LICENSE"')
-        self.write_line('# Add any other files for the install directory (license files, app data, etc) here')
+        self.write_line('file /r *')
+
+        #self.write_line('file /r ' + osnap.const.python_folder)
+        #for project_package in self.project_packages:
+        #    self.write_line('file /r ' + project_package)
+        #self.write_line('file "*.ico"')
+        #self.write_line('file ${EXENAME}')
+        #self.write_line('file main.py')
+        #self.write_line('file "LICENSE"')
+        #self.write_line('# Add any other files for the install directory (license files, app data, etc) here')
+
         self.write_line('')
         self.write_line('# Uninstaller - See function un.onInit and section "uninstall" for configuration')
         self.write_line('writeUninstaller "$INSTDIR\\uninstall.exe"')

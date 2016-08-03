@@ -5,14 +5,27 @@ import os
 import shutil
 import distutils.dir_util
 import time
-import osnap.util
+import datetime
+import subprocess
+import collections
 
-if osnap.util.is_windows():
-    import osnap.installer_win
+import osnap.util
 import osnap.util
 import osnap.const
 import osnap.write_timestamp
+import osnap.make_nsis
 
+
+def copy_app(destination_directory, verbose):
+    # todo: get 'application' programmatically
+    for d in ['application', osnap.const.python_folder]:
+        if verbose:
+            print('copying %s to %s' % (d, os.path.join(destination_directory, d)))
+        distutils.dir_util.copy_tree(d, os.path.join(destination_directory, d))
+    for f in ['main.py', 'LICENSE']:
+        if verbose:
+            print('copying %s to %s' % (f, destination_directory))
+        shutil.copy2(f, destination_directory)
 
 def create_installer(author, application_name, description='', url='', project_packages=[], compile_code=False,
                      verbose=False):
@@ -46,13 +59,66 @@ def create_installer(author, application_name, description='', url='', project_p
                     py_compile.compile(path)
 
     if osnap.util.is_mac():
-        macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
-        for d in ['application', osnap.const.python_folder]:
-            # todo: get launch.app from somewhere programmatic
-            distutils.dir_util.copy_tree(d, os.path.join(macos_dir, d))
-        distutils.dir_util.copy_tree(os.path.join(osnap.util.get_launch_name()), dist_dir)
-        for f in ['main.py']:
-            shutil.copy2(f, macos_dir)
+        if verbose:
+            print('copying %s to %s' % (osnap.util.get_launch_name(), dist_dir))
+        distutils.dir_util.copy_tree(osnap.util.get_launch_name(), dist_dir)
+        # todo: get launch.app programmatically
+        copy_app(os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS'), verbose)
     elif osnap.util.is_windows():
-        raise NotImplementedError
 
+        launch_dest = os.path.join(dist_dir, osnap.util.get_launch_name())
+        if verbose:
+            print('copying %s to %s' % (osnap.util.get_launch_name(), launch_dest))
+        distutils.dir_util.copy_tree(osnap.util.get_launch_name(), launch_dest)
+
+        copy_app(dist_dir, verbose)
+
+        # application .exe
+        exe_name = application_name + '.exe'
+        orig_launch_exe_path = os.path.join(dist_dir, osnap.util.get_launch_name(), 'launch.exe')
+        dist_exe_path = os.path.join(dist_dir, osnap.util.get_launch_name(), exe_name)
+        if verbose:
+            print('moving %s to %s' % (orig_launch_exe_path, dist_exe_path))
+        os.rename(orig_launch_exe_path, dist_exe_path)
+
+        # icon
+        shutil.copy(application_name + '.ico', dist_dir)
+
+        # write NSIS script
+        nsis_file_name = application_name + '.nsis'
+
+        defines = collections.OrderedDict()
+        defines['COMPANYNAME'] = author
+        defines['APPNAME'] = application_name
+        defines['EXENAME'] = exe_name
+        defines['DESCRIPTION'] = '"' + description + '"'  # the description must be in quotes
+
+        import _build_
+
+        s = int(_build_.seconds_since_epoch)
+        dt = datetime.datetime.fromtimestamp(s)
+        defines['VERSIONMAJOR'] = dt.year
+        defines['VERSIONMINOR'] = dt.timetuple().tm_yday
+        defines['VERSIONBUILD'] = _build_.version
+
+        # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
+        # It is possible to use "mailto:" links in here to open the email client
+        defines['HELPURL'] = url  # "Support Information" link
+        defines['UPDATEURL'] = url  # "Product Updates" link
+        defines['ABOUTURL'] = url  # "Publisher" link
+
+        if verbose:
+            print('writing %s' % nsis_file_name)
+        nsis = osnap.make_nsis.MakeNSIS(defines, nsis_file_name, project_packages)
+        nsis.write_all()
+
+        shutil.copy(nsis_file_name, dist_dir)
+
+        os.chdir(dist_dir)
+
+        command = [os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis'), nsis_file_name]
+        if verbose:
+            print('%s' % str(command))
+        subprocess.check_call(command)
+    else:
+        raise NotImplementedError
