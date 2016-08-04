@@ -174,4 +174,5 @@ test_example/launchwin
 *.dmg
 .DS_Store
 temp.bat
+temp.sh
 
