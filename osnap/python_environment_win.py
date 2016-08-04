@@ -39,8 +39,8 @@ def create_python_win(version, clean_cache, verbose):
     temp_file = 'temp.zip'
     temp_path = os.path.join(osnap.const.python_folder, temp_file)
     os.rename(pythonxx_zip_path, temp_path)
-    osnap.util.extract(osnap.const.python_folder, temp_file, os.path.join(osnap.const.python_folder, os.path.basename(pythonxx_zip_path)),
-             verbose)
+    osnap.util.extract(osnap.const.python_folder, temp_file,
+                       os.path.join(osnap.const.python_folder, os.path.basename(pythonxx_zip_path)), verbose)
     os.remove(temp_path)
 
     python_path = os.path.join(osnap.const.python_folder, 'python.exe')

@@ -173,4 +173,5 @@ test_example/launchwin
 .eggs
 *.dmg
 .DS_Store
+temp.bat
 

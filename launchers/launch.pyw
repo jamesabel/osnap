@@ -47,14 +47,18 @@ def launch():
     while len(os.getcwd()) > shortest_path_string:
         logger.info('looking for %s at cwd : %s' % (python_path, os.getcwd()))
 
-        # special case for MacOS since the .app cwd starts in Contents/Resources
-        mac_os = 'MacOS'
-        if os.path.exists(mac_os):
-            os.chdir(mac_os)
-        else:
-            if os.path.exists(python_folder):
-                logger.info('%s found at %s' % (python_folder, os.getcwd()))
+        if os.path.exists(python_folder):
+            logger.info('%s found at %s' % (python_folder, os.getcwd()))
+            break
+        # special directories to follow back 'up'
+        found_special = False
+        for d in ['MacOS', 'osnapp']:
+            if os.path.exists(d):
+                os.chdir(d)
+                logger.info('%s found - did a chdir to %s' % (d, os.getcwd()))
+                found_special = True
                 break
+        if not found_special:
             try:
                 os.chdir('..')
             except IOError:

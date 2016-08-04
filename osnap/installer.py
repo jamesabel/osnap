@@ -22,10 +22,11 @@ def copy_app(destination_directory, verbose):
         if verbose:
             print('copying %s to %s' % (d, os.path.join(destination_directory, d)))
         distutils.dir_util.copy_tree(d, os.path.join(destination_directory, d))
-    for f in ['main.py', 'LICENSE']:
+    for f in ['main.py']:
         if verbose:
             print('copying %s to %s' % (f, destination_directory))
         shutil.copy2(f, destination_directory)
+
 
 def create_installer(author, application_name, description='', url='', project_packages=[], compile_code=False,
                      verbose=False):
@@ -66,23 +67,24 @@ def create_installer(author, application_name, description='', url='', project_p
         copy_app(os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS'), verbose)
     elif osnap.util.is_windows():
 
-        launch_dest = os.path.join(dist_dir, osnap.util.get_launch_name())
         if verbose:
-            print('copying %s to %s' % (osnap.util.get_launch_name(), launch_dest))
-        distutils.dir_util.copy_tree(osnap.util.get_launch_name(), launch_dest)
+            print('copying %s to %s' % (osnap.util.get_launch_name(), dist_dir))
+        distutils.dir_util.copy_tree(osnap.util.get_launch_name(), dist_dir)
 
-        copy_app(dist_dir, verbose)
+        # todo: get 'osnapp' programmatically
+        copy_app(os.path.join(dist_dir, 'osnapp'), verbose)
 
         # application .exe
         exe_name = application_name + '.exe'
-        orig_launch_exe_path = os.path.join(dist_dir, osnap.util.get_launch_name(), 'launch.exe')
-        dist_exe_path = os.path.join(dist_dir, osnap.util.get_launch_name(), exe_name)
+        orig_launch_exe_path = os.path.join(dist_dir, 'launch.exe')
+        dist_exe_path = os.path.join(dist_dir, exe_name)
         if verbose:
             print('moving %s to %s' % (orig_launch_exe_path, dist_exe_path))
         os.rename(orig_launch_exe_path, dist_exe_path)
 
-        # icon
-        shutil.copy(application_name + '.ico', dist_dir)
+        # support files
+        for f in [application_name + '.ico', 'LICENSE']:
+            shutil.copy2(f, dist_dir)
 
         # write NSIS script
         nsis_file_name = application_name + '.nsis'

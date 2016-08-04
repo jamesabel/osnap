@@ -14,7 +14,8 @@ class MakeNSIS:
         self.file_path = file_path
         self.project_packages = project_packages
         self.file = None
-        self.installers_folder = 'installers'
+        # we run this in a special subfolder so put the installers one level up
+        self.installers_folder = os.path.join('..', 'installers')
         if not os.path.exists(self.installers_folder):
             os.mkdir(self.installers_folder)
 
