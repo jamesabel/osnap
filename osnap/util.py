@@ -6,8 +6,6 @@ import zipfile
 import tarfile
 import requests
 
-import osnap.const
-
 
 def is_windows():
     return platform.system().lower()[0] == 'w'
