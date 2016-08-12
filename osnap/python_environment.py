@@ -4,8 +4,6 @@ import base64
 import shutil
 import os
 
-import osnap.util
-
 import osnap.python_environment_win
 import osnap.python_environment_mac
 import osnap.util
