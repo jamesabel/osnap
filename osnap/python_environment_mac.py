@@ -28,21 +28,29 @@ def create_python_mac(version, clean_cache, verbose):
 
     # get the embeddable Python .zip
     # version here is x.y (e.g. 3.5), not z.y.z (e.g. not 3.5.2)
+
+    # version 2.2.1 produces a "Segmentation fault: 11" error when python is run:
+    # zip_file = 'egenix-pyrun-2.2.1-py%s_ucs4-macosx-10.5-x86_64.tgz' % version
+    # so use a prior version:
     zip_file = 'egenix-pyrun-2.2.0-py%s_ucs4-macosx-10.5-x86_64.tgz' % version
+
     zip_url = 'https://downloads.egenix.com/python/%s' % zip_file
     osnap.util.get(zip_url, cache_folder, zip_file, verbose)
     osnap.util.extract(cache_folder, zip_file, osnap.const.python_folder, verbose)
 
     python_path = os.path.join(osnap.const.python_folder, 'bin', 'python3')
 
+    print('starting pip install')
     # get and install pip
     get_pip_file = 'get-pip.py'
     osnap.util.get('https://bootstrap.pypa.io/get-pip.py', cache_folder, get_pip_file, verbose)
     shutil.copyfile(os.path.join(cache_folder, get_pip_file), os.path.join(osnap.const.python_folder, get_pip_file))
-    cmd = [python_path, os.path.join(osnap.const.python_folder, get_pip_file)]
+    cmd = python_path + ' ' + os.path.join(osnap.const.python_folder, get_pip_file)
     if verbose:
         print('executing %s' % str(cmd))
-    subprocess.check_call(cmd)
+    # make sure we don't detect the venv's pip and decide we already have pip
+    subprocess.run(cmd, shell=True, env={})
+    print('ending pip install')
 
     return True
 
