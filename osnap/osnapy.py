@@ -36,7 +36,7 @@ def add_package(package, verbose=False):
         raise NotImplementedError
 
 
-def add_packages_from_requirements_file(requirements_file_path, verbose=False):
+def add_packages_from_requirements_file(requirements_file_path = 'requirements.txt', verbose=False):
     with open(requirements_file_path) as f:
         for l in f:
             l = l.strip()
