@@ -57,17 +57,13 @@ def create_python_win(version, clean_cache, verbose):
     return True
 
 
-def add_packages_win(requirements, verbose):
-    # install the site packages
-    if requirements is None:
-        print('Error: no requirements given')
-        return
+def add_package_win(package, verbose):
+    # install a site package
     pip_path = os.path.join(osnap.const.python_folder, 'Scripts', 'pip.exe')
-    for requirement in requirements:
-        cmd = [pip_path, 'install', '--upgrade', requirement]
-        if verbose:
-            print('executing %s' % str(cmd))
-        subprocess.check_call(cmd)
+    cmd = [pip_path, 'install', '--upgrade', package]
+    if verbose:
+        print('executing %s' % str(cmd))
+    subprocess.check_call(cmd)
 
 
 

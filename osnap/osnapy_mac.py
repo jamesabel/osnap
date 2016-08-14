@@ -55,14 +55,10 @@ def create_python_mac(version, clean_cache, verbose):
     return True
 
 
-def add_packages_mac(requirements, verbose):
-    # install the site packages
-    if requirements is None:
-        print('Error: no requirements given')
-        return
+def add_package_mac(package, verbose):
+    # install a site package
     pip_path = os.path.join(osnap.const.python_folder, 'bin', 'pip3')
-    for requirement in requirements:
-        cmd = [pip_path, 'install', '--upgrade', requirement]
-        if verbose:
-            print('executing %s' % str(cmd))
-        subprocess.check_call(cmd)
+    cmd = pip_path + ' install --upgrade ' + package
+    if verbose:
+        print('executing %s' % str(cmd))
+    subprocess.check_call(cmd, shell=True, env={})
