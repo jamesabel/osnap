@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python3 create_python_environment.py
+python3 create_osnapy.py

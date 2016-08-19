@@ -1,1 +1,1 @@
-venv\scripts\python create_python_environment.py
+venv\scripts\python create_osnapy.py
