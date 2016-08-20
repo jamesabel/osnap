@@ -7,7 +7,8 @@
 is known as 'freezing' and installing.  Examples include delivering Python applications to Windows PCs (both laptops and desktops), 
 MacBooks, and iMacs.
 
-This is a brand new tool so it hasn't received use by anyone other than the author yet.  Let the author (James Abel) know if you have issues.
+**This is a brand new tool so it hasn't received use by anyone other than the author yet.  Let the author (James Abel) know if you have issues.
+**
 
 ## Related Tools ##
 
