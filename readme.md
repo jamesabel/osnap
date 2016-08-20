@@ -4,7 +4,10 @@
 
 ## Introduction ##
 `osnap` is a way to deliver self-contained Python applications to end users for Windows and (soon) OSX/MacOS.  This process
-is known as 'freezing' and installing.  Examples include delivering Python applications to Windows PCs (both laptops and desktops), MacBooks, and iMacs.
+is known as 'freezing' and installing.  Examples include delivering Python applications to Windows PCs (both laptops and desktops), 
+MacBooks, and iMacs.
+
+This is a brand new tool so it hasn't received use by anyone other than the author yet.  Let the author (James Abel) know if you have issues.
 
 ## Related Tools ##
 
@@ -39,7 +42,7 @@ tools:
 
 In general, there are 2 phases:
 
-1. Creation of the Python environment (this will be in the `osnappython` folder)
+1. Creation of the Python environment (this will be in the `osnapy` folder)
 2. Creation of the installer
 
 The `osnap` Python environment may be created during development.  Alternatively, the developer can use their own Python environment (e.g. a [venv](https://docs.python.org/3/library/venv.html)), but eventually an `osnap` Python environment will 
