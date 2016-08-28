@@ -4,10 +4,11 @@ import py_compile
 import os
 import shutil
 import distutils.dir_util
-import time
+import sys
 import datetime
 import subprocess
 import collections
+import zipfile
 
 import osnap.util
 import osnap.util
@@ -34,17 +35,7 @@ def create_installer(author, application_name, description='', url='', project_p
     osnap.write_timestamp.write_timestamp()
 
     dist_dir = 'dist'
-    # fancy rmtree, since for some reason shutil.rmtree can return before the tree is actually removed
-    count = 0
-    while os.path.exists(dist_dir) and count < 100:
-        try:
-            shutil.rmtree(dist_dir)
-        except FileNotFoundError:
-            pass
-        except IOError:
-            time.sleep(1)
-        count += 1
-    os.mkdir(dist_dir)
+    osnap.util.rm_mk_tree(dist_dir)
 
     # If the user has been using osnap's python, you shouldn't have to compile the code here, which keeps the
     # distribution size smaller.  However, just in case the installed program is having an issue with non-compiled
@@ -60,11 +51,18 @@ def create_installer(author, application_name, description='', url='', project_p
                     py_compile.compile(path)
 
     if osnap.util.is_mac():
+        launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', 'osnap', osnap.util.get_launch_name() + '.zip')
+        if not os.path.exists(launch_zip_path):
+            print('error: can not find %s' % launch_zip_path)
+            return
         if verbose:
-            print('copying %s to %s' % (osnap.util.get_launch_name(), dist_dir))
-        distutils.dir_util.copy_tree(osnap.util.get_launch_name(), dist_dir)
-        # todo: get launch.app programmatically
-        copy_app(os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS'), verbose)
+            print('unzipping %s to %s' % (launch_zip_path, dist_dir))
+        zip_ref = zipfile.ZipFile(launch_zip_path, 'r')
+        zip_ref.extractall(dist_dir)
+        zip_ref.close()
+        macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
+        copy_app(macos_dir, verbose)
+        os.chmod(os.path.join(macos_dir, 'launch'), 0o555)
     elif osnap.util.is_windows():
 
         if verbose:

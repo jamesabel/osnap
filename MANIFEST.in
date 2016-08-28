@@ -1,1 +1,9 @@
-recursive-include osnap *
+# note that this does not include examples and tests - see the source repo for that
+include setup.py
+include .gitignore
+include *.md
+include *.txt
+include LICENSE
+include MANIFEST.in
+include osnap/*.py
+include launchers/*.zip

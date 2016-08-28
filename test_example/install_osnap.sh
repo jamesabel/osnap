@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 pushd .
 cd ..
-python3 setup.py install
+test_example/venv/bin/python setup.py install
 popd

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-osnappython/bin/python3 main.py
+osnapy/bin/python3 main.py

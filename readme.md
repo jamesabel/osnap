@@ -7,14 +7,13 @@
 is known as 'freezing' and installing.  Examples include delivering Python applications to Windows PCs (both laptops and desktops), 
 MacBooks, and iMacs.
 
-**This is a brand new tool so it hasn't received use by anyone other than the author yet.  Let the author (James Abel) know if you have issues.
-**
+**This is a brand new tool so it hasn't received use by anyone other than the author yet.  Let the author (James Abel) know if you have issues.**
 
 ## Related Tools ##
 
-Several tools already exist in this space, such as [cx_freeze](http://cx-freeze.sourceforge.net/), [py2exe](http://www.py2exe.org/), [py2app](https://pythonhosted.org/py2app/), 
-[briefcase](http://pybee.org/project/projects/tools/briefcase/), [pyinstaller](http://www.pyinstaller.org/), and [pynsist](https://github.com/takluyver/pynsist).  However, `osnap` provides some specific features not found in these other 
-tools:
+Several tools already exist in this space, such as [cx_freeze](http://cx-freeze.sourceforge.net/), [py2exe](http://www.py2exe.org/), [py2app](https://pythonhosted.org/py2app/), [briefcase](http://pybee.org/project/projects/tools/briefcase/), [pyinstaller](http://www.pyinstaller.org/), [bbfreeze](https://pypi.python.org/pypi/bbfreeze) and [pynsist](https://github.com/takluyver/pynsist).  
+
+However, `osnap` provides some specific features not found in these other tools:
 
 - Works on hard-to-freeze packages such as [cryptography](https://cryptography.io).
 - Provides an executable file as the application's main invocation.  This way it looks like a traditional native application 

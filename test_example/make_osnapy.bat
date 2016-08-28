@@ -1,0 +1,1 @@
+venv\scripts\python make_osnapy.py

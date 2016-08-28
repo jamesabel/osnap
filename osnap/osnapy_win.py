@@ -54,8 +54,6 @@ def create_python_win(version, clean_cache, verbose):
         print('executing %s' % str(cmd))
     subprocess.check_call(cmd)
 
-    return True
-
 
 def add_package_win(package, verbose):
     # install a site package

@@ -3,9 +3,10 @@
 
 import os
 import subprocess
-import appdirs
 import logging
 import platform
+
+import appdirs
 
 # conventions
 python_folder = 'osnapy'
@@ -44,7 +45,8 @@ def launch():
     # go up directory levels until we find our python interpreter
     # this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
     shortest_path_string = 5  # tolerate all OS, e.g. c:\, /, etc.
-    while len(os.getcwd()) > shortest_path_string:
+    loop_count = 0
+    while not os.path.exists(python_folder) and len(os.getcwd()) > shortest_path_string and loop_count < 10:
         logger.info('looking for %s at cwd : %s' % (python_path, os.getcwd()))
 
         if os.path.exists(python_folder):
@@ -64,6 +66,7 @@ def launch():
             except IOError:
                 logger.error('IOError : while looking for %s in %s' % (python_folder, os.getcwd()))
                 break
+        loop_count += 1
 
     if os.path.exists(python_path):
         call_parameters = [python_path, program]
@@ -71,7 +74,7 @@ def launch():
         return_code = subprocess.call(call_parameters)
         logger.info('return code : %s' % str(return_code))
     else:
-        error_string = '%s does not exist' % python_path
+        error_string = '%s does not exist (loop_count=%d)' % (python_path, loop_count)
         logger.error(error_string)
         print(error_string)
         print('see %s' % log_file_path)

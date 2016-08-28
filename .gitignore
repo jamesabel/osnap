@@ -174,5 +174,10 @@ test_example/launchwin
 *.dmg
 .DS_Store
 temp.bat
-temp.sh
+temp*.sh
 
+# we get this dynamically
+install-pyrun.sh
+
+# readme.md is the source - sometimes we copy readme.md to readme so we don't need both
+readme

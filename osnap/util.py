@@ -4,6 +4,8 @@ import os
 import shutil
 import zipfile
 import tarfile
+import time
+
 import requests
 
 
@@ -69,3 +71,26 @@ def get(url, destination_folder, file_name, verbose):
         with open(destination_path, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
         del response
+
+
+def rm_mk_tree(dir_path):
+    '''
+    Clears out a dir.  Makes it if it doesn't exist.
+    :param dir_path: dir to clear out
+    :return: True on success
+    '''
+
+    # fancy rmtree, since for some reason shutil.rmtree can return before the tree is actually removed
+    count = 600
+    while os.path.exists(dir_path) and count > 0:
+        try:
+            shutil.rmtree(dir_path)
+        except FileNotFoundError:
+            pass
+        except IOError:
+            time.sleep(0.1)
+        count -= 1
+
+    os.mkdir(dir_path)
+
+    return count > 0
