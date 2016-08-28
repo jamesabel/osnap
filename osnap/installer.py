@@ -29,6 +29,19 @@ def copy_app(destination_directory, verbose):
         shutil.copy2(f, destination_directory)
 
 
+def zip_launcher(dist_dir, verbose):
+    launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', 'osnap',
+                                   osnap.util.get_launch_name() + '.zip')
+    if not os.path.exists(launch_zip_path):
+        print('error: can not find %s' % launch_zip_path)
+        return
+    if verbose:
+        print('unzipping %s to %s' % (launch_zip_path, dist_dir))
+    zip_ref = zipfile.ZipFile(launch_zip_path, 'r')
+    zip_ref.extractall(dist_dir)
+    zip_ref.close()
+
+
 def create_installer(author, application_name, description='', url='', project_packages=[], compile_code=False,
                      verbose=False):
 
@@ -51,23 +64,12 @@ def create_installer(author, application_name, description='', url='', project_p
                     py_compile.compile(path)
 
     if osnap.util.is_mac():
-        launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', 'osnap', osnap.util.get_launch_name() + '.zip')
-        if not os.path.exists(launch_zip_path):
-            print('error: can not find %s' % launch_zip_path)
-            return
-        if verbose:
-            print('unzipping %s to %s' % (launch_zip_path, dist_dir))
-        zip_ref = zipfile.ZipFile(launch_zip_path, 'r')
-        zip_ref.extractall(dist_dir)
-        zip_ref.close()
+        zip_launcher(dist_dir, verbose)
         macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
         copy_app(macos_dir, verbose)
         os.chmod(os.path.join(macos_dir, 'launch'), 0o555)
     elif osnap.util.is_windows():
-
-        if verbose:
-            print('copying %s to %s' % (osnap.util.get_launch_name(), dist_dir))
-        distutils.dir_util.copy_tree(osnap.util.get_launch_name(), dist_dir)
+        zip_launcher(dist_dir, verbose)
 
         # todo: get 'osnapp' programmatically
         copy_app(os.path.join(dist_dir, 'osnapp'), verbose)
