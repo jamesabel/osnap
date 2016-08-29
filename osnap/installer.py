@@ -9,6 +9,7 @@ import datetime
 import subprocess
 import collections
 import zipfile
+import argparse
 
 import osnap.util
 import osnap.util
@@ -123,3 +124,16 @@ def create_installer(author, application_name, description='', url='', project_p
         subprocess.check_call(command)
     else:
         raise NotImplementedError
+
+
+def main():
+    parser = argparse.ArgumentParser(description='create the osnapy Python environment',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--author', required=True, help='name of author, e.g. a person or a company')
+    parser.add_argument('--app', required=True, help='application name')
+    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='print more verbose messages')
+    args = parser.parse_args()
+    create_installer(args.author, args.app, verbose=args.verbose)
+
+if __name__ == '__main__':
+    main()
