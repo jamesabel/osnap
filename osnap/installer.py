@@ -29,7 +29,7 @@ def copy_app(destination_directory, verbose):
         shutil.copy2(f, destination_directory)
 
 
-def zip_launcher(dist_dir, verbose):
+def unzip_launcher(dist_dir, verbose):
     launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', 'osnap',
                                    osnap.util.get_launch_name() + '.zip')
     if not os.path.exists(launch_zip_path):
@@ -63,13 +63,12 @@ def create_installer(author, application_name, description='', url='', project_p
                 if 'port_v2' not in path:
                     py_compile.compile(path)
 
+    unzip_launcher(dist_dir, verbose)
     if osnap.util.is_mac():
-        zip_launcher(dist_dir, verbose)
         macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
         copy_app(macos_dir, verbose)
         os.chmod(os.path.join(macos_dir, 'launch'), 0o555)
     elif osnap.util.is_windows():
-        zip_launcher(dist_dir, verbose)
 
         # todo: get 'osnapp' programmatically
         copy_app(os.path.join(dist_dir, 'osnapp'), verbose)
@@ -89,29 +88,29 @@ def create_installer(author, application_name, description='', url='', project_p
         # write NSIS script
         nsis_file_name = application_name + '.nsis'
 
-        defines = collections.OrderedDict()
-        defines['COMPANYNAME'] = author
-        defines['APPNAME'] = application_name
-        defines['EXENAME'] = exe_name
-        defines['DESCRIPTION'] = '"' + description + '"'  # the description must be in quotes
+        nsis_defines = collections.OrderedDict()
+        nsis_defines['COMPANYNAME'] = author
+        nsis_defines['APPNAME'] = application_name
+        nsis_defines['EXENAME'] = exe_name
+        nsis_defines['DESCRIPTION'] = '"' + description + '"'  # the description must be in quotes
 
         import _build_
 
         s = int(_build_.seconds_since_epoch)
         dt = datetime.datetime.fromtimestamp(s)
-        defines['VERSIONMAJOR'] = dt.year
-        defines['VERSIONMINOR'] = dt.timetuple().tm_yday
-        defines['VERSIONBUILD'] = _build_.version
+        nsis_defines['VERSIONMAJOR'] = dt.year
+        nsis_defines['VERSIONMINOR'] = dt.timetuple().tm_yday
+        nsis_defines['VERSIONBUILD'] = _build_.version
 
         # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
         # It is possible to use "mailto:" links in here to open the email client
-        defines['HELPURL'] = url  # "Support Information" link
-        defines['UPDATEURL'] = url  # "Product Updates" link
-        defines['ABOUTURL'] = url  # "Publisher" link
+        nsis_defines['HELPURL'] = url  # "Support Information" link
+        nsis_defines['UPDATEURL'] = url  # "Product Updates" link
+        nsis_defines['ABOUTURL'] = url  # "Publisher" link
 
         if verbose:
             print('writing %s' % nsis_file_name)
-        nsis = osnap.make_nsis.MakeNSIS(defines, nsis_file_name, project_packages)
+        nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name, project_packages)
         nsis.write_all()
 
         shutil.copy(nsis_file_name, dist_dir)

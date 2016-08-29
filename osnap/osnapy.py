@@ -1,4 +1,6 @@
 
+import argparse
+
 import osnap.osnapy_win
 import osnap.osnapy_mac
 import osnap.util
@@ -8,7 +10,7 @@ import osnap.write_timestamp
 
 def create_osnapy(version, clean_cache=False, verbose=False):
     if verbose:
-        print('creating osnapy')
+        print('creating osnapy Python environment using python %s' % version)
     if osnap.util.is_windows():
         osnap.osnapy_win.create_python_win(version, clean_cache, verbose)
     elif osnap.util.is_mac():
@@ -33,43 +35,13 @@ def add_packages_from_requirements_file(requirements_file_path='requirements.txt
                     raise NotImplementedError
 
 
-# def unpack_launcher(verbose=False):
-#     zip_file = osnap.util.get_launch_name() + '.zip'
-#     launch_name = osnap.util.get_launch_name()
-#
-#     if os.path.exists(launch_name):
-#         if verbose:
-#             print('removing directory : %s' % launch_name)
-#         shutil.rmtree(launch_name)
-#
-#     if verbose:
-#         print('unpacking %s' % launch_name)
-#     with open(zip_file, 'wb') as out_file:
-#         if osnap.util.is_windows():
-#             launch_code = osnap.launchwin.launchwin
-#         elif osnap.util.is_mac():
-#             launch_code = osnap.launchmac.launchmac
-#         else:
-#             raise NotImplementedError
-#         out_file.write(bz2.decompress(base64.b16decode(launch_code)))
-#     shutil.unpack_archive(zip_file, launch_name)
-#
-#     # make launcher executable
-#     if verbose:
-#         print('making %s executable' % launch_name)
-#     mod = 0o755
-#     for root, dirs, files in os.walk(launch_name):
-#         for dir in dirs:
-#             os.chmod(os.path.join(root, dir), mod)
-#         for f in files:
-#             os.chmod(os.path.join(root, f), mod)
-#
-#     if verbose:
-#         print('cleanup : removing %s' % zip_file)
-#     os.remove(zip_file)
-
 def main():
-    create_osnapy('3.5', verbose=True)
+    parser = argparse.ArgumentParser(description='create the osnapy Python environment',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-p', '--python', default='3.5', help='python version')
+    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='print more verbose messages')
+    args = parser.parse_args()
+    create_osnapy(args.python, args.verbose)
 
 if __name__ == '__main__':
     main()
