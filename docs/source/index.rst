@@ -18,6 +18,7 @@ Guide:
 .. toctree::
     :maxdepth: 2
 
+    quickstart
     license
     help
 
