@@ -2,6 +2,7 @@
 include setup.py
 include .gitignore
 include *.md
+include *.rst
 include *.txt
 include LICENSE
 include MANIFEST.in

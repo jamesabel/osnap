@@ -7,4 +7,4 @@ if [ -z "$MYPYTHONHOME" ]; then
 fi
 echo ${MYPYTHONHOME}
 ${MYPYTHONHOME}/bin/pyvenv --clear venv
-./venv/bin/pip3 install sphinx
+./venv/bin/pip3 install -U -r requirements.txt
