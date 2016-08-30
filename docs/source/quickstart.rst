@@ -19,6 +19,6 @@ the default, use the ``--python <version>`` switch.
 Develop your Python application.
 
 Run ``venv/bin/python -m osnap.installer --author <author name> --app <your app name>`` .  This will
-create an installer for your application for the OS that you are running on.  ``Author`` may be your name or your
+create an installer for your application for the OS that you are running on.  ``author name`` may be your name or your
 company's name.  If you have spaces in a name, put the name in double quotes.
 
