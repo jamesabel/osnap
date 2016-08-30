@@ -3,8 +3,7 @@
 LICENSE
 LICENSE.txt
 MANIFEST.in
-README.rst
-readme.md
+readme.rst
 requirements.txt
 setup.cfg
 setup.py

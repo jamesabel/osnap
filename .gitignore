@@ -179,4 +179,5 @@ temp*.sh
 # we get this dynamically
 install-pyrun.sh
 
-
+# this is merely copied from LICENSE
+LICENSE.txt
