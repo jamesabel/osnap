@@ -58,20 +58,22 @@ def add_packages_from_requirements_file(requirements_file_path='requirements.txt
                             _install_from_source(package, osnap.source_paths.source_paths[package], verbose)
 
 
-def _install_from_source(package_name, zip_url, verbose):
+def _install_from_source(package_name, url, verbose):
     msg = 'installing %s from source' % package_name
-    if verbose:
-        print('start : %s' % msg)
-    pycparser_zip_file = package_name + '.zip'
-    pycparser_dir = os.path.abspath(os.path.join(osnap.const.TEMP_FOLDER, package_name, package_name + '-master'))
-    osnap.util.get(zip_url, osnap.const.CACHE_FOLDER, pycparser_zip_file, verbose)
-    osnap.util.extract(osnap.const.CACHE_FOLDER, pycparser_zip_file,
+    print('start : %s' % msg)
+    if url[-10:] == 'master.zip':
+        source_file = package_name + '.zip'
+        d = os.path.abspath(os.path.join(osnap.const.TEMP_FOLDER, package_name, package_name + '-master'))
+    else:
+        source_file = url[url.rfind('/')+1:]
+        d = os.path.abspath(os.path.join(osnap.const.TEMP_FOLDER, package_name, source_file.replace('.tar.gz', '')))
+    osnap.util.get(url, osnap.const.CACHE_FOLDER, source_file, verbose)
+    osnap.util.extract(osnap.const.CACHE_FOLDER, source_file,
                        os.path.join(osnap.const.TEMP_FOLDER, package_name), verbose)
     cmd = os.path.abspath(os.path.join(osnap.const.python_folder, 'bin', 'python3')) + ' setup.py install'
-    if verbose:
-        print(cmd)
-        print(pycparser_dir)
-    subprocess.run(cmd, shell=True, env=osnap.const.ENV, cwd=pycparser_dir)
+    print(cmd)
+    print(d)
+    subprocess.run(cmd, env=osnap.const.ENV, cwd=d, shell=True)
     if verbose:
         print('done : %s' % msg)
 

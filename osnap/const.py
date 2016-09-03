@@ -15,5 +15,10 @@ windows_app_dir = 'osnapp'
 CACHE_FOLDER = 'cache'
 TEMP_FOLDER = 'temp'
 
-# CPATH may be needed if we have to compile cryptography
-ENV = {'CPATH': '/usr/local/opt/openssl/include'}
+# CPATH may be needed if we have to compile a package, e.g. cryptography
+#
+# I don't like putting PATH here like this, but I had to for SQLAlchemy else I got:
+#   File "<pyrun>/os.py", line 683, in __getitem__
+# KeyError: 'PATH'
+ENV = {'CPATH': '/usr/local/opt/openssl/include',
+       'PATH': '/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:.'}

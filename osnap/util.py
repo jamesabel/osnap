@@ -44,18 +44,20 @@ def make_dir(path, remove, verbose):
 
 def extract(source_folder, source_file, destination_folder, verbose):
     source = os.path.join(source_folder, source_file)
-    if verbose:
-        print('extracting %s to %s' % (source, destination_folder))
-    extension = source_file[-4:]
-    if extension == '.zip':
+    print('extracting %s to %s' % (source, destination_folder))
+    extension = source_file[source_file.rfind('.')+1:]
+    if extension == 'zip':
         with zipfile.ZipFile(source) as zf:
             # assumes a trusted .zip
             zf.extractall(destination_folder)
-    elif extension == '.tgz':
+    elif extension == 'tgz':
+        with tarfile.open(source) as tf:
+            tf.extractall(destination_folder)
+    elif extension == 'gz':
         with tarfile.open(source) as tf:
             tf.extractall(destination_folder)
     else:
-        print('error : unsupported file type %s' % source_file)
+        print('error : unsupported file type %s (extension : %s)' % (source_file, extension))
         exit()
 
 
