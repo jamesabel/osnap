@@ -61,7 +61,7 @@ def add_package_win(package, verbose):
     cmd = [pip_path, 'install', '--upgrade', package]
     if verbose:
         print('executing %s' % str(cmd))
-    subprocess.check_call(cmd)
+    return subprocess.call(cmd)
 
 
 

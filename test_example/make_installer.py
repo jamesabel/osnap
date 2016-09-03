@@ -6,7 +6,7 @@ AUTHOR = 'test'
 
 
 def create_installer(verbose):
-    osnap.installer.create_installer(AUTHOR, APPLICATION_NAME,
+    osnap.installer.create_installer(AUTHOR, APPLICATION_NAME, 'application',
                                      'this is my test example', 'www.mydomain.com', ['application'], verbose=verbose)
 
 

@@ -14,7 +14,7 @@ def create_osnapy(verbose):
     else:
         raise NotImplementedError
 
-    osnap.osnapy.create_osnapy(python_version, verbose=verbose)
+    osnap.osnapy.make_osnapy(python_version, verbose=verbose)
     # todo: the launcher
     # osnap.osnapy.unpack_launcher(verbose=verbose)
 

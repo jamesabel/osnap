@@ -18,9 +18,8 @@ import osnap.write_timestamp
 import osnap.make_nsis
 
 
-def copy_app(destination_directory, verbose):
-    # todo: get 'application' programmatically
-    for d in ['application', osnap.const.python_folder]:
+def copy_app(destination_directory, application_dir, verbose):
+    for d in [application_dir, osnap.const.python_folder]:
         if verbose:
             print('copying %s to %s' % (d, os.path.join(destination_directory, d)))
         distutils.dir_util.copy_tree(d, os.path.join(destination_directory, d))
@@ -43,10 +42,13 @@ def unzip_launcher(dist_dir, verbose):
     zip_ref.close()
 
 
-def create_installer(author, application_name, description='', url='', project_packages=[], compile_code=False,
-                     verbose=False):
+def create_installer(author, application_name, application_dir=None, description='', url='', project_packages=[],
+                     compile_code=False, verbose=False):
 
     osnap.write_timestamp.write_timestamp()
+
+    if application_dir is None:
+        application_dir = application_name
 
     dist_dir = 'dist'
     osnap.util.rm_mk_tree(dist_dir)
@@ -67,12 +69,11 @@ def create_installer(author, application_name, description='', url='', project_p
     unzip_launcher(dist_dir, verbose)
     if osnap.util.is_mac():
         macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
-        copy_app(macos_dir, verbose)
+        copy_app(macos_dir, application_dir, verbose)
         os.chmod(os.path.join(macos_dir, 'launch'), 0o555)
     elif osnap.util.is_windows():
 
-        # todo: get 'osnapp' programmatically
-        copy_app(os.path.join(dist_dir, 'osnapp'), verbose)
+        copy_app(os.path.join(dist_dir, osnap.const.windows_app_dir), verbose)
 
         # application .exe
         exe_name = application_name + '.exe'
@@ -127,7 +128,7 @@ def create_installer(author, application_name, description='', url='', project_p
 
 
 def main():
-    parser = argparse.ArgumentParser(description='create the osnapy Python environment',
+    parser = argparse.ArgumentParser(description='create the osnap installer',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--author', required=True, help='name of author, e.g. a person or a company')
     parser.add_argument('--app', required=True, help='application name')
