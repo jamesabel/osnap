@@ -8,8 +8,7 @@ import logging
 import appdirs
 import os
 
-# must be called "application" so that it get bundled correctly
-import application.mymodule
+import test_example.mymodule
 
 APPLICATION_NAME = 'test_example'
 AUTHOR = 'test_author'
@@ -37,7 +36,7 @@ def main():
     logger.info('sys.path : %s' % str(sys.path))
 
     # run my application
-    application.mymodule.run()
+    test_example.mymodule.run()
 
 if __name__ == '__main__':
     main()

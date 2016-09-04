@@ -22,9 +22,9 @@
 									<key>GID</key>
 									<integer>80</integer>
 									<key>PATH</key>
-									<string>dist/launch.app</string>
+									<string>dist/test_example.app</string>
 									<key>PATH_TYPE</key>
-									<integer>3</integer>
+									<integer>1</integer>
 									<key>PERMISSIONS</key>
 									<integer>493</integer>
 									<key>TYPE</key>

@@ -12,6 +12,8 @@ program = 'main.py'
 
 windows_app_dir = 'osnapp'
 
+dist_dir = 'dist'
+
 CACHE_FOLDER = 'cache'
 TEMP_FOLDER = 'temp'
 

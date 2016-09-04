@@ -29,6 +29,10 @@ def copy_app(destination_directory, application_dir, verbose):
         shutil.copy2(f, destination_directory)
 
 
+def _mac_os_dir(application_name):
+    return os.path.join(osnap.const.dist_dir, application_name + '.app', 'Contents', 'MacOS')
+
+
 def unzip_launcher(dist_dir, verbose):
     launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', 'osnap',
                                    osnap.util.get_launch_name() + '.zip')
@@ -42,16 +46,14 @@ def unzip_launcher(dist_dir, verbose):
     zip_ref.close()
 
 
-def create_installer(author, application_name, application_dir=None, description='', url='', project_packages=[],
-                     compile_code=False, verbose=False):
+def make_installer(author, application_name, description='', url='', project_packages=[], compile_code=False,
+                   verbose=False):
 
     osnap.write_timestamp.write_timestamp()
 
-    if application_dir is None:
-        application_dir = application_name
-
-    dist_dir = 'dist'
-    osnap.util.rm_mk_tree(dist_dir)
+    print('clearing and making %s (%s)' % (osnap.const.dist_dir, os.path.abspath(osnap.const.dist_dir)))
+    osnap.util.rm_mk_tree(osnap.const.dist_dir)
+    print('done making %s (%s)' % (osnap.const.dist_dir, os.path.abspath(osnap.const.dist_dir)))
 
     # If the user has been using osnap's python, you shouldn't have to compile the code here, which keeps the
     # distribution size smaller.  However, just in case the installed program is having an issue with non-compiled
@@ -66,26 +68,28 @@ def create_installer(author, application_name, application_dir=None, description
                 if 'port_v2' not in path:
                     py_compile.compile(path)
 
-    unzip_launcher(dist_dir, verbose)
+    unzip_launcher(osnap.const.dist_dir, verbose)
     if osnap.util.is_mac():
-        macos_dir = os.path.join(dist_dir, 'launch.app', 'Contents', 'MacOS')
-        copy_app(macos_dir, application_dir, verbose)
-        os.chmod(os.path.join(macos_dir, 'launch'), 0o555)
+        macos_dir = _mac_os_dir(application_name)
+        os.rename(os.path.join(osnap.const.dist_dir, 'launch.app'),
+                  os.path.join(osnap.const.dist_dir, application_name + '.app'))
+        copy_app(macos_dir, application_name, verbose)
+        os.chmod(os.path.join(macos_dir, 'launch'), 0o777)
     elif osnap.util.is_windows():
 
-        copy_app(os.path.join(dist_dir, osnap.const.windows_app_dir), verbose)
+        copy_app(os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir), verbose)
 
         # application .exe
         exe_name = application_name + '.exe'
-        orig_launch_exe_path = os.path.join(dist_dir, 'launch.exe')
-        dist_exe_path = os.path.join(dist_dir, exe_name)
+        orig_launch_exe_path = os.path.join(osnap.const.dist_dir, 'launch.exe')
+        dist_exe_path = os.path.join(osnap.const.dist_dir, exe_name)
         if verbose:
             print('moving %s to %s' % (orig_launch_exe_path, dist_exe_path))
         os.rename(orig_launch_exe_path, dist_exe_path)
 
         # support files
         for f in [application_name + '.ico', 'LICENSE']:
-            shutil.copy2(f, dist_dir)
+            shutil.copy2(f, osnap.const.dist_dir)
 
         # write NSIS script
         nsis_file_name = application_name + '.nsis'
@@ -115,9 +119,9 @@ def create_installer(author, application_name, application_dir=None, description
         nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name, project_packages)
         nsis.write_all()
 
-        shutil.copy(nsis_file_name, dist_dir)
+        shutil.copy(nsis_file_name, osnap.const.dist_dir)
 
-        os.chdir(dist_dir)
+        os.chdir(osnap.const.dist_dir)
 
         command = [os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis'), nsis_file_name]
         if verbose:
@@ -134,7 +138,7 @@ def main():
     parser.add_argument('--app', required=True, help='application name')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='print more verbose messages')
     args = parser.parse_args()
-    create_installer(args.author, args.app, verbose=args.verbose)
+    make_installer(args.author, args.app, verbose=args.verbose)
 
 if __name__ == '__main__':
     main()

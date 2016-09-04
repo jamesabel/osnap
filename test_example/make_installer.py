@@ -5,13 +5,10 @@ APPLICATION_NAME = 'test_example'
 AUTHOR = 'test'
 
 
-def create_installer(verbose):
-    osnap.installer.create_installer(AUTHOR, APPLICATION_NAME, 'application',
-                                     'this is my test example', 'www.mydomain.com', ['application'], verbose=verbose)
+def make_installer(verbose):
+    osnap.installer.make_installer(AUTHOR, APPLICATION_NAME, 'this is my test example', 'www.mydomain.com',
+                                   [APPLICATION_NAME], verbose=verbose)
 
-
-def main():
-    create_installer(True)
 
 if __name__ == '__main__':
-    main()
+    make_installer(True)
