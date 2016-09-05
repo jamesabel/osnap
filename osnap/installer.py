@@ -77,7 +77,7 @@ def make_installer(author, application_name, description='', url='', project_pac
         os.chmod(os.path.join(macos_dir, 'launch'), 0o777)
     elif osnap.util.is_windows():
 
-        copy_app(os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir), verbose)
+        copy_app(os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir), application_name, verbose)
 
         # application .exe
         exe_name = application_name + '.exe'
