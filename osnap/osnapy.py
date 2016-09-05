@@ -79,11 +79,20 @@ def _install_from_source(package_name, url, verbose):
 
 
 def main():
+    if osnap.util.is_mac():
+        default_python = '3.5'
+    elif osnap.util.is_windows():
+        default_python = '3.5.2'
+    else:
+        default_python = None
+        print('platform not supported')
     parser = argparse.ArgumentParser(description='create the osnapy Python environment',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-p', '--python', default='3.5', help='python version')
+    parser.add_argument('-p', '--python', default=default_python, help='python version')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='print more verbose messages')
     args = parser.parse_args()
+    if args.verbose:
+        print('verbose on')
     make_osnapy(args.python, args.verbose)
 
 if __name__ == '__main__':

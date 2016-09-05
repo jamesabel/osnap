@@ -39,7 +39,7 @@ def make_dir(path, remove, verbose):
     if not os.path.exists(path):
         if verbose:
             print('making folder : %s' % path)
-            os.mkdir(path)
+        os.mkdir(path)
 
 
 def extract(source_folder, source_file, destination_folder, verbose):
@@ -70,10 +70,14 @@ def get(url, destination_folder, file_name, verbose):
         if verbose:
             print('get %s to %s' % (url, destination_path))
         response = requests.get(url, stream=True)
-        with open(destination_path, 'wb') as out_file:
-            shutil.copyfileobj(response.raw, out_file)
-        del response
-
+        if response.status_code == 200:
+            with open(destination_path, 'wb') as out_file:
+                shutil.copyfileobj(response.raw, out_file)
+            del response
+        else:
+            print('error getting %s from %s' % (file_name, url))
+            return False
+    return True
 
 def rm_mk_tree(dir_path):
     '''

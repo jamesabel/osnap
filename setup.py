@@ -7,7 +7,7 @@ launcher_dir = 'launchers'
 setup(
     name='osnap',
     description='Turns Python applications into native applications',
-    version='0.0.0',
+    version='0.0.1',
     author='James Abel',
     author_email='j@abel.co',
     url='http://osnap.abel.co',

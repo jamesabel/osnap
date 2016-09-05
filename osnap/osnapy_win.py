@@ -26,8 +26,11 @@ def create_python_win(version, clean_cache, verbose):
     # get the embeddable Python .zip
     zip_file = 'python-%s-embed-amd64.zip' % version
     zip_url = 'https://www.python.org/ftp/python/%s/%s' % (version, zip_file)
-    osnap.util.get(zip_url, cache_folder, zip_file, verbose)
-    osnap.util.extract(cache_folder, zip_file, osnap.const.python_folder, verbose)
+    if osnap.util.get(zip_url, cache_folder, zip_file, verbose):
+        osnap.util.extract(cache_folder, zip_file, osnap.const.python_folder, verbose)
+    else:
+        print('could not get embeddable Python (%s from %s) - exiting' % (zip_file, zip_url))
+        exit()
 
     # we need to use an unzipped version of pythonXX.zip since some packages can't read into the .zip
     # (e.g. https://bugs.python.org/issue24960)
