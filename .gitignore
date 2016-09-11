@@ -181,3 +181,6 @@ install-pyrun.sh
 
 # this is merely copied from LICENSE
 LICENSE.txt
+
+# windows app is built here
+test_example/osnapp/
