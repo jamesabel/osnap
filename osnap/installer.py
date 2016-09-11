@@ -74,6 +74,12 @@ def make_installer(author, application_name, description='', url='', project_pac
         os.rename(os.path.join(osnap.const.dist_dir, 'launch.app'),
                   os.path.join(osnap.const.dist_dir, application_name + '.app'))
         copy_app(macos_dir, application_name, verbose)
+        for project_package in project_packages:
+            if project_package != application_name:
+                dest = os.path.join(macos_dir, project_package)
+                if verbose:
+                    print('copying %s to %s' % (project_package, dest))
+                distutils.dir_util.copy_tree(project_package, dest)
         os.chmod(os.path.join(macos_dir, 'launch'), 0o777)
     elif osnap.util.is_windows():
 
