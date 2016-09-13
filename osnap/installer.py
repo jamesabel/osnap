@@ -84,21 +84,21 @@ def make_installer(author, application_name, description='', url='', project_pac
         os.chmod(os.path.join(macos_dir, 'launch'), 0o777)
 
         # make dmg
-        dmg_command = ['hdiutil', 'create', '-volname', application_name, '-srcfolder', os.path.abspath('dist'),
-                       '-ov', '-format', 'UDZO', application_name + '.dmg']
-        dmg_command = ' '.join(dmg_command)
-        if verbose:
-            print('%s' % str(dmg_command))
-        subprocess.check_call(dmg_command, shell=True)
+        with ['hdiutil', 'create', '-volname', application_name, '-srcfolder', os.path.abspath('dist'), '-ov',
+              '-format', 'UDZO', application_name + '.dmg'] as dmg_command:
+            dmg_command = ' '.join(dmg_command)
+            if verbose:
+                print('%s' % str(dmg_command))
+            subprocess.check_call(dmg_command, shell=True)
 
         # make pkg based installer
         pkgproj_path = application_name + '.pkgproj'
-        osnap.make_pkgproj.make_prkproj(application_name, pkgproj_path, verbose)
-        pkgproj_command = [os.path.join(os.sep, 'usr', 'local', 'bin', 'packagesbuild'), pkgproj_path]
-        pkgproj_command = ' '.join(pkgproj_command)
-        if verbose:
-            print('%s' % str(pkgproj_command))
-        subprocess.check_call(pkgproj_command, shell=True)
+        with [os.path.join(os.sep, 'usr', 'local', 'bin', 'packagesbuild'), pkgproj_path] as pkgproj_command:
+            osnap.make_pkgproj.make_prkproj(application_name, pkgproj_path, verbose)
+            pkgproj_command = ' '.join(pkgproj_command)
+            if verbose:
+                print('%s' % str(pkgproj_command))
+            subprocess.check_call(pkgproj_command, shell=True)
 
     elif osnap.util.is_windows():
 
