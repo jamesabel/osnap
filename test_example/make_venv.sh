@@ -8,6 +8,7 @@ fi
 echo ${MYPYTHONHOME}
 ${MYPYTHONHOME}/bin/pyvenv --clear venv
 ./venv/bin/pip3 install requests
+./venv/bin/pip3 install jinja2
 # install osnap
 pushd .
 cd ..

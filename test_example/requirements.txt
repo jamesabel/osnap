@@ -1,4 +1,5 @@
 appdirs
+jinja2
 PyQt5
 cryptography
 # we don't really need sqlalchemy but its a good test
