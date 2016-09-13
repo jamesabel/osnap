@@ -16,6 +16,7 @@ import osnap.util
 import osnap.const
 import osnap.write_timestamp
 import osnap.make_nsis
+import osnap.make_pkgproj
 
 
 def copy_app(destination_directory, application_dir, verbose):
@@ -34,7 +35,7 @@ def _mac_os_dir(application_name):
 
 
 def unzip_launcher(dist_dir, verbose):
-    launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', 'osnap',
+    launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', osnap.const.package_name,
                                    osnap.util.get_launch_name() + '.zip')
     if not os.path.exists(launch_zip_path):
         print('error: can not find %s' % launch_zip_path)
@@ -81,6 +82,24 @@ def make_installer(author, application_name, description='', url='', project_pac
                     print('copying %s to %s' % (project_package, dest))
                 distutils.dir_util.copy_tree(project_package, dest)
         os.chmod(os.path.join(macos_dir, 'launch'), 0o777)
+
+        # make dmg
+        dmg_command = ['hdiutil', 'create', '-volname', application_name, '-srcfolder', os.path.abspath('dist'),
+                       '-ov', '-format', 'UDZO', application_name + '.dmg']
+        dmg_command = ' '.join(dmg_command)
+        if verbose:
+            print('%s' % str(dmg_command))
+        subprocess.check_call(dmg_command, shell=True)
+
+        # make pkg based installer
+        pkgproj_path = application_name + '.pkgproj'
+        osnap.make_pkgproj.make_prkproj(application_name, pkgproj_path, verbose)
+        pkgproj_command = [os.path.join(os.sep, 'usr', 'local', 'bin', 'packagesbuild'), pkgproj_path]
+        pkgproj_command = ' '.join(pkgproj_command)
+        if verbose:
+            print('%s' % str(pkgproj_command))
+        subprocess.check_call(pkgproj_command, shell=True)
+
     elif osnap.util.is_windows():
 
         copy_app(os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir), application_name, verbose)
@@ -129,10 +148,10 @@ def make_installer(author, application_name, description='', url='', project_pac
 
         os.chdir(osnap.const.dist_dir)
 
-        command = [os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis'), nsis_file_name]
+        pkgproj_command = [os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis'), nsis_file_name]
         if verbose:
-            print('%s' % str(command))
-        subprocess.check_call(command)
+            print('%s' % str(pkgproj_command))
+        subprocess.check_call(pkgproj_command)
     else:
         raise NotImplementedError
 

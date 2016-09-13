@@ -22,7 +22,7 @@
 									<key>GID</key>
 									<integer>80</integer>
 									<key>PATH</key>
-									<string>dist/test_example.app</string>
+									<string>dist/{{ application_name }}.app</string>
 									<key>PATH_TYPE</key>
 									<integer>1</integer>
 									<key>PERMISSIONS</key>
@@ -449,7 +449,7 @@
 				<key>IDENTIFIER</key>
 				<string>com.abel.pkg.testexample</string>
 				<key>NAME</key>
-				<string>test_example</string>
+				<string>{{ application_name }}</string>
 				<key>OVERWRITE_PERMISSIONS</key>
 				<false/>
 				<key>VERSION</key>
@@ -552,7 +552,7 @@
 						<key>LANGUAGE</key>
 						<string>English</string>
 						<key>VALUE</key>
-						<string>test_example</string>
+						<string>{{ application_name }}</string>
 					</dict>
 				</array>
 			</dict>
@@ -769,7 +769,7 @@
 				</dict>
 			</array>
 			<key>NAME</key>
-			<string>test_example</string>
+			<string>{{ application_name }}</string>
 		</dict>
 	</dict>
 	<key>TYPE</key>

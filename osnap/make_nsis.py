@@ -46,7 +46,7 @@ class MakeNSIS:
         self.write_line("# This will be in the installer/uninstaller's title bar")
         self.write_line('Name "${COMPANYNAME} - ${APPNAME}"')
         self.write_line('Icon "${APPNAME}.ico"')
-        self.write_line('outFile "%s\${COMPANYNAME}_${APPNAME}_installer.exe"' % self.installers_folder)
+        self.write_line('outFile "%s\${APPNAME}_installer.exe"' % self.installers_folder)
         self.write_line('')
         self.write_line('!include LogicLib.nsh')
 
@@ -81,15 +81,6 @@ class MakeNSIS:
         self.write_line('setOutPath $INSTDIR')
         self.write_line('# Files added here should be removed by the uninstaller (see section "uninstall")')
         self.write_line('file /r *')
-
-        #self.write_line('file /r ' + osnap.const.python_folder)
-        #for project_package in self.project_packages:
-        #    self.write_line('file /r ' + project_package)
-        #self.write_line('file "*.ico"')
-        #self.write_line('file ${EXENAME}')
-        #self.write_line('file main.py')
-        #self.write_line('file "LICENSE"')
-        #self.write_line('# Add any other files for the install directory (license files, app data, etc) here')
 
         self.write_line('')
         self.write_line('# Uninstaller - See function un.onInit and section "uninstall" for configuration')

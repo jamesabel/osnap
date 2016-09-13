@@ -4,6 +4,7 @@ include .gitignore
 include *.md
 include *.rst
 include *.txt
+include osnap/*.pkgproj
 include LICENSE
 include MANIFEST.in
 include osnap/*.py

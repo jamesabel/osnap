@@ -1,6 +1,8 @@
 
 import os
 
+package_name = 'osnap'
+
 # this is the same as the launcher uses
 python_folder = 'osnapy'
 
