@@ -3,12 +3,9 @@ import os
 import subprocess
 import shutil
 import glob
-import bz2
-import base64
 
 
 import osnap.make_nsis
-import osnap.write_timestamp
 import osnap.const
 import osnap.util
 

@@ -3,7 +3,10 @@
 LICENSE
 LICENSE.txt
 MANIFEST.in
+README.txt
+readme.md
 readme.rst
+readme.txt
 requirements.txt
 setup.cfg
 setup.py
@@ -13,8 +16,10 @@ osnap/__init__.py
 osnap/const.py
 osnap/installer.py
 osnap/make_nsis.py
+osnap/make_pkgproj.py
 osnap/osnapy.py
 osnap/osnapy_mac.py
 osnap/osnapy_win.py
+osnap/source_paths.py
+osnap/template.pkgproj
 osnap/util.py
-osnap/write_timestamp.py

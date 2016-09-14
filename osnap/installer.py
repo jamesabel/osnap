@@ -14,7 +14,6 @@ import argparse
 import osnap.util
 import osnap.util
 import osnap.const
-import osnap.write_timestamp
 import osnap.make_nsis
 import osnap.make_pkgproj
 
@@ -47,10 +46,8 @@ def unzip_launcher(dist_dir, verbose):
     zip_ref.close()
 
 
-def make_installer(author, application_name, description='', url='', project_packages=[], compile_code=False,
-                   verbose=False):
-
-    osnap.write_timestamp.write_timestamp()
+def make_installer(author, application_name, description='', url='', project_packages=[], version='0.0.0',
+                   compile_code=False, verbose=False):
 
     print('clearing and making %s (%s)' % (osnap.const.dist_dir, os.path.abspath(osnap.const.dist_dir)))
     osnap.util.rm_mk_tree(osnap.const.dist_dir)
@@ -125,13 +122,10 @@ def make_installer(author, application_name, description='', url='', project_pac
         nsis_defines['EXENAME'] = exe_name
         nsis_defines['DESCRIPTION'] = '"' + description + '"'  # the description must be in quotes
 
-        import _build_
-
-        s = int(_build_.seconds_since_epoch)
-        dt = datetime.datetime.fromtimestamp(s)
-        nsis_defines['VERSIONMAJOR'] = dt.year
-        nsis_defines['VERSIONMINOR'] = dt.timetuple().tm_yday
-        nsis_defines['VERSIONBUILD'] = _build_.version
+        v = version.split('.')
+        nsis_defines['VERSIONMAJOR'] = v[0]
+        nsis_defines['VERSIONMINOR'] = v[1]
+        nsis_defines['VERSIONBUILD'] = version + '(' + str(datetime.datetime.utcnow()) + ')'
 
         # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
         # It is possible to use "mailto:" links in here to open the email client

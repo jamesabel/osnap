@@ -7,7 +7,6 @@ import osnap.osnapy_win
 import osnap.osnapy_mac
 import osnap.util
 import osnap.const
-import osnap.write_timestamp
 import osnap.source_paths
 
 

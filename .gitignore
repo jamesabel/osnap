@@ -182,5 +182,9 @@ install-pyrun.sh
 # this is merely copied from LICENSE
 LICENSE.txt
 
+# these are generated from readme.rst
+readme.md
+readme.txt
+
 # windows app is built here
 test_example/osnapp/
