@@ -1,7 +1,6 @@
 
 import osnap.osnapy
 import osnap.util
-import osnap.write_timestamp
 
 
 def create_osnapy(verbose):
@@ -15,8 +14,6 @@ def create_osnapy(verbose):
         raise NotImplementedError
 
     osnap.osnapy.make_osnapy(python_version, verbose=verbose)
-    # todo: the launcher
-    # osnap.osnapy.unpack_launcher(verbose=verbose)
 
 
 if __name__ == '__main__':
