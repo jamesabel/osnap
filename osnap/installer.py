@@ -125,7 +125,7 @@ def make_installer(author, application_name, description='', url='', project_pac
         v = version.split('.')
         nsis_defines['VERSIONMAJOR'] = v[0]
         nsis_defines['VERSIONMINOR'] = v[1]
-        nsis_defines['VERSIONBUILD'] = version + '(' + str(datetime.datetime.utcnow()) + ')'
+        nsis_defines['VERSIONBUILD'] = v[2]
 
         # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
         # It is possible to use "mailto:" links in here to open the email client
