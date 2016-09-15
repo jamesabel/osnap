@@ -7,5 +7,8 @@ Introduction
 This process is known as freezing and installing.  Examples include delivering Python applications to Windows 
 PCs (both laptops and desktops), MacBooks, and iMacs.
 
+Now on PyPI:
+``pip install osnap``
+
 See the documentation at `readthedocs <http://osnap.readthedocs.io/>`_ .
 
