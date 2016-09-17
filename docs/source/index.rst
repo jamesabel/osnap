@@ -13,6 +13,7 @@ Table of Contents
     :maxdepth: 2
 
     quickstart
+    userguide
     example
     relatedtools
     requirements
