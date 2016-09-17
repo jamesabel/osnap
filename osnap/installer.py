@@ -26,7 +26,10 @@ def copy_app(destination_directory, application_dir, verbose):
     for f in ['main.py']:
         if verbose:
             print('copying %s to %s' % (f, destination_directory))
-        shutil.copy2(f, destination_directory)
+        if os.path.exists(f):
+            shutil.copy2(f, destination_directory)
+        else:
+            print('error : expected %s (%s) to exist but it does not' % (f, os.path.abspath(f)))
 
 
 def _mac_os_dir(application_name):
@@ -90,12 +93,18 @@ def make_installer(author, application_name, description='', url='', project_pac
 
         # make pkg based installer
         pkgproj_path = application_name + '.pkgproj'
-        pkgproj_command = [os.path.join(os.sep, 'usr', 'local', 'bin', 'packagesbuild'), pkgproj_path]
-        osnap.make_pkgproj.make_prkproj(application_name, pkgproj_path, verbose)
-        pkgproj_command = ' '.join(pkgproj_command)
-        if verbose:
-            print('%s' % str(pkgproj_command))
-        subprocess.check_call(pkgproj_command, shell=True)
+        packages_path = os.path.join(os.sep, 'usr', 'local', 'bin', 'packagesbuild')
+        if os.path.exists(packages_path):
+            pkgproj_command = [packages_path, pkgproj_path]
+            osnap.make_pkgproj.make_prkproj(application_name, pkgproj_path, verbose)
+            pkgproj_command = ' '.join(pkgproj_command)
+            if verbose:
+                print('%s' % str(pkgproj_command))
+            subprocess.check_call(pkgproj_command, shell=True)
+        else:
+            print('error: Packages tool could not be found (expected at %s)' % packages_path)
+            print('See http://s.sudre.free.fr/Software/Packages/about.html (Packages by Stéphane Sudre) for '
+                  'information on how to obtain the Packages tool.')
 
     elif osnap.util.is_windows():
 
@@ -142,10 +151,16 @@ def make_installer(author, application_name, description='', url='', project_pac
 
         os.chdir(osnap.const.dist_dir)
 
-        pkgproj_command = [os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis'), nsis_file_name]
-        if verbose:
-            print('%s' % str(pkgproj_command))
-        subprocess.check_call(pkgproj_command)
+        nsis_path = os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis')
+        if os.path.exists(nsis_path):
+            pkgproj_command = [nsis_path, nsis_file_name]
+            if verbose:
+                print('%s' % str(pkgproj_command))
+            subprocess.check_call(pkgproj_command)
+        else:
+            print('error: NSIS tool could not be found (expected at %s)' % nsis_path)
+            print('See http://nsis.sourceforge.net for information on how to obtain the NSIS '
+                  '(Nullsoft Scriptable Install System) tool.')
     else:
         raise NotImplementedError
 
