@@ -151,7 +151,7 @@ def make_installer(author, application_name, description='', url='', project_pac
 
         os.chdir(osnap.const.dist_dir)
 
-        nsis_path = os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis')
+        nsis_path = os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis.exe')
         if os.path.exists(nsis_path):
             pkgproj_command = [nsis_path, nsis_file_name]
             if verbose:
