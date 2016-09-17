@@ -13,7 +13,7 @@ Development Phase
 In the development phase you create the Python environment that you use to run your code.  You first create a
 traditional virtual Python environment.  We use `venv` for this Python environment directory name.
 This is separate from using `OSNAP`, but it allows the programmer to first develop and test their application in the
-traditionaly way.
+traditional way.
 
 The `OSNAP` package is installed into this `venv`. ::
 
@@ -27,7 +27,7 @@ Once some basic application functionality is achieved it is recommended that `OS
 This Python environment is in the `osnapy` directory (note the 'y' - osnapy is short for `OSNAP Python`).
 The `osnapy` directory is a separate and stand-alone Python environment that will be packaged up as part of the
 application delivered to end users.  `requirements.txt` is used to determine what Python packages are installed
-into osnapy.  The Python interpreter in `osnapy` should be used for testing to ensure functionallity.
+into osnapy.  The Python interpreter in `osnapy` should be used for testing to ensure functionality.
 
 Installation Phase
 ^^^^^^^^^^^^^^^^^^
