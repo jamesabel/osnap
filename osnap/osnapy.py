@@ -31,7 +31,7 @@ def add_packages_from_requirements_file(requirements_file_path='requirements.txt
     with open(requirements_file_path) as f:
         for l in f:
             package = l.strip()
-            if len(l) > 0:
+            if len(package) > 0 and package[0] != '#':
                 ret = None
                 if verbose:
                     print('adding %s to python environment' % str(package))
