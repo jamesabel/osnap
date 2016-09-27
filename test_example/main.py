@@ -26,14 +26,14 @@ def main():
     print(log_file_path)
 
     file_handler = logging.FileHandler(log_file_path)
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     logger.setLevel(logging.INFO)
 
     # illustrate what Python we are running
-    logger.info('sys.version : %s' % str(sys.version))
-    logger.info('sys.path : %s' % str(sys.path))
+    logger.info('test_example : sys.version : %s' % str(sys.version))
+    logger.info('test_example : sys.path : %s' % str(sys.path))
 
     # run my application
     test_example.mymodule.run()
