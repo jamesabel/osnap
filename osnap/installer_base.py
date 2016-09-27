@@ -2,10 +2,9 @@
 import os
 import py_compile
 import fnmatch
-import distutils.dir_util
-import shutil
 import zipfile
 import sys
+import site
 
 import osnap.const
 import osnap.util
@@ -41,11 +40,21 @@ class OsnapInstaller:
         # derived classes will finish making the installer
 
     def unzip_launcher(self, destination):
-        launch_zip_path = os.path.join(os.path.dirname(sys.executable), '..', osnap.const.package_name,
-                                       osnap.util.get_launch_name() + '.zip')
-        if not os.path.exists(launch_zip_path):
-            print('error: can not find %s' % launch_zip_path)
-            return
+
+        # find zip
+        launch_zip_name = osnap.util.get_launch_name() + '.zip'
+        locations = []
+        for d in site.getsitepackages():
+            for r, _, fs in os.walk(d):
+                for f in fs:
+                    if f == launch_zip_name:
+                        locations.append(os.path.join(r, f))
+        if len(locations) != 1:
+            s = 'error : looking for exactly one %s : found %s' % (launch_zip_name, str(locations))
+            print(s)
+            sys.exit(s)
+        launch_zip_path = locations[0]
+
         if self.verbose:
             print('unzipping %s to %s' % (launch_zip_path, destination))
         zip_ref = zipfile.ZipFile(launch_zip_path, 'r')
