@@ -12,7 +12,8 @@ import osnap.util
 
 
 class OsnapInstaller:
-    def __init__(self, python_version, application_name, author, description, url, compile_code, verbose, use_pyrun):
+    def __init__(self, python_version, application_name, author, description, url, compile_code, verbose,
+                 use_pyrun=False):
         self.python_version = python_version
         self.application_name = application_name
         self.author = author

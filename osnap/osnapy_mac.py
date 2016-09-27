@@ -1,6 +1,9 @@
 import os
-import pwd
 import subprocess
+try:
+    import pwd
+except ImportError:
+    pass
 
 import osnap.const
 import osnap.util

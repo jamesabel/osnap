@@ -2,6 +2,7 @@ import os
 import shutil
 import collections
 import subprocess
+import distutils.dir_util
 
 import osnap.const
 import osnap.make_nsis
@@ -12,8 +13,23 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
     def make_installer(self):
 
-        self.copy_app(os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir), self.application_name,
-                      self.verbose)
+        osnap.util.rm_mk_tree(osnap.const.dist_dir, self.verbose)
+        osnap.util.rm_mk_tree('installers', self.verbose)
+        self.unzip_launcher(osnap.const.dist_dir)
+        distutils.dir_util.copy_tree(self.application_name, os.path.join(osnap.const.dist_dir,
+                                                                         osnap.const.windows_app_dir,
+                                                                         self.application_name))
+        distutils.dir_util.copy_tree(osnap.const.python_folder,
+                                     os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir,
+                                                  osnap.const.python_folder))
+        win_app_dir_path = os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir)
+        for f in ['main.py']:
+            if self.verbose:
+                print('copying %s to %s' % (f, win_app_dir_path))
+            if os.path.exists(f):
+                shutil.copy2(f, win_app_dir_path)
+            else:
+                print('error : expected %s (%s) to exist but it does not' % (f, os.path.abspath(f)))
 
         # application .exe
         exe_name = self.application_name + '.exe'
@@ -49,7 +65,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
         if self.verbose:
             print('writing %s' % nsis_file_name)
-        nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name, project_packages)
+        nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name, [self.application_name])
         nsis.write_all()
 
         shutil.copy(nsis_file_name, osnap.const.dist_dir)
