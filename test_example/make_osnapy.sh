@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
-venv/bin/python3 -m osnap.osnapy -p 3.5
+# needs sudo since we are installing into /Applications
+# -H is required
+sudo -H venv/bin/python3 make_osnapy.py
