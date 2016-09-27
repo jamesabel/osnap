@@ -6,4 +6,3 @@ set +x
 ./install_osnap.sh
 ./make_osnapy.sh
 ./make_installer.sh
-popd
