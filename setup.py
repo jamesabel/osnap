@@ -9,7 +9,7 @@ launcher_dir = 'launchers'
 
 setup(
     name=application_name,
-    description='Turns Python applications into native applications',
+    description='Turns Python applications into native applications for Windows and OSX/MacOS',
     version=osnap.__version__,
     author='James Abel',
     author_email='j@abel.co',
@@ -20,5 +20,8 @@ setup(
                            os.path.join(launcher_dir, 'launchmac.zip'),
                            os.path.join(launcher_dir, 'launchwin.zip')])],
     packages=[application_name],
+    install_requires=[
+        'requests',
+    ],
     classifiers=[]
 )
