@@ -1,6 +1,5 @@
 
-import os
-from distutils.core import setup
+from setuptools import setup
 
 import osnap
 
@@ -16,9 +15,9 @@ setup(
     url='http://osnap.abel.co',
     download_url='https://github.com/jamesabel/osnap/tarball/' + osnap.__version__,
     keywords=['freeze', 'application', 'native'],
-    data_files=[('osnap', [os.path.join(application_name, 'template.pkgproj'),
-                           os.path.join(launcher_dir, 'launchmac.zip'),
-                           os.path.join(launcher_dir, 'launchwin.zip')])],
+
+    package_data={'': ['*.pkgproj', 'launch*.zip']},
+
     packages=[application_name],
     install_requires=[
         'requests',
