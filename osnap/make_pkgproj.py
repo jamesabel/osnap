@@ -12,17 +12,17 @@ def make_prkproj(application_name, pkgproj_path, verbose):
 
     # find Packages project file
     template_file = 'template.pkgproj'
-    locations = []
+    locations = set()
     for d in site.getsitepackages():
         for r, _, fs in os.walk(d):
             for f in fs:
                 if f == template_file:
-                    locations.append(os.path.join(r, f))
+                    locations.add(os.path.join(r, f))
     if len(locations) != 1:
         s = 'error : looking for exactly one %s : found %s' % (template_file, str(locations))
         print(s)
         sys.exit(s)
-    template_file_path = locations[0]
+    template_file_path = locations.pop()
 
     if verbose:
         print('using %s as template' % template_file_path)

@@ -43,17 +43,17 @@ class OsnapInstaller:
 
         # find zip
         launch_zip_name = osnap.util.get_launch_name() + '.zip'
-        locations = []
+        locations = set()
         for d in site.getsitepackages():
             for r, _, fs in os.walk(d):
                 for f in fs:
                     if f == launch_zip_name:
-                        locations.append(os.path.join(r, f))
+                        locations.add(os.path.join(r, f))
         if len(locations) != 1:
             s = 'error : looking for exactly one %s : found %s' % (launch_zip_name, str(locations))
             print(s)
             sys.exit(s)
-        launch_zip_path = locations[0]
+        launch_zip_path = locations.pop()
 
         if self.verbose:
             print('unzipping %s to %s' % (launch_zip_path, destination))
