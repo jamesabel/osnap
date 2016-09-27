@@ -16,6 +16,4 @@ $LOCALPYTHON setup.py py2app
 # put the app into a zip
 $LOCALPYTHON dist2zip.py
 #
-# copy over the launcher to the test app so we can test the launcher out
-#rm -r ../test_example/launch.app
-#cp -r launchmac/launch.app/ ../test_example/launch.app
+mv -f *.zip ../osnap
