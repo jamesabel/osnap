@@ -17,7 +17,10 @@ def make_prkproj(application_name, pkgproj_path, verbose):
         for r, _, fs in os.walk(d):
             for f in fs:
                 if f == template_file:
-                    locations.add(os.path.join(r, f))
+                    p = os.path.join(r, f)
+                    if osnap.util.is_windows():
+                        p = p.lower()
+                    locations.add(p)
     if len(locations) != 1:
         s = 'error : looking for exactly one %s : found %s' % (template_file, str(locations))
         print(s)

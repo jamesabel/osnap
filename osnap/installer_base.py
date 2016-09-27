@@ -48,7 +48,10 @@ class OsnapInstaller:
             for r, _, fs in os.walk(d):
                 for f in fs:
                     if f == launch_zip_name:
-                        locations.add(os.path.join(r, f))
+                        p = os.path.join(r, f)
+                        if osnap.util.is_windows():
+                            p = p.lower()
+                        locations.add(p)
         if len(locations) != 1:
             s = 'error : looking for exactly one %s : found %s' % (launch_zip_name, str(locations))
             print(s)
