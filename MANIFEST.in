@@ -8,4 +8,4 @@ include osnap/*.pkgproj
 include LICENSE
 include MANIFEST.in
 include osnap/*.py
-include launchers/*.zip
+include osnap/*.zip
