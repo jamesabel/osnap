@@ -5,6 +5,7 @@ import subprocess
 import distutils.dir_util
 
 import osnap.const
+import osnap.util
 import osnap.make_nsis
 import osnap.installer_base
 
