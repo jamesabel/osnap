@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -x
 /usr/local/bin/pyvenv --clear venv
-./venv/bin/pip3 install requests
-./venv/bin/pip3 install jinja2
+./venv/bin/pip3 install -U pip
+./venv/bin/pip3 install -U setuptools
+./venv/bin/pip3 install -U -r requirements.txt
 # install osnap
 pushd .
 cd ..
