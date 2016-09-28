@@ -12,7 +12,9 @@ Table of Contents
 .. toctree::
     :maxdepth: 2
 
+    announcements
     quickstart
+    ossupport
     userguide
     example
     relatedtools

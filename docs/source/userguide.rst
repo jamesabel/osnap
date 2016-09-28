@@ -5,7 +5,7 @@ User Guide
 Introduction
 ------------
 `OSNAP` essentially has two phases - the development phase and the installer phase.  Freezing and installing
-applications can run into issues and it's best to proceed step by step.  This is handy in case there are problems so
+applications can run into issues and it's best to proceed step by step.  This is handy in case there are problems, so
 that debugging is a more reasonable task.
 
 Development Phase
