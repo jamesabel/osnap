@@ -1,6 +1,10 @@
 osnap - Overly Simplistic Native Application tool for Python
 ============================================================
 
+Announcements
+-------------
+``OSNAP`` 0.0.4 has been released on github and PyPI.
+
 Introduction
 ------------
 ``OSNAP`` is a way to deliver self-contained Python applications to end users for Windows and OSX/MacOS.  
