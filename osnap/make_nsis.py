@@ -3,6 +3,7 @@ import os
 import datetime
 
 import osnap.const
+import osnap.util
 
 
 class MakeNSIS:
@@ -16,8 +17,7 @@ class MakeNSIS:
         self.file = None
         # we run this in a special subfolder so put the installers one level up
         self.installers_folder = os.path.join('..', 'installers')
-        if not os.path.exists(self.installers_folder):
-            os.mkdir(self.installers_folder)
+        osnap.util.rm_mk_tree(self.installers_folder)
 
     def write_line(self, l):
         self.file.write(l)
