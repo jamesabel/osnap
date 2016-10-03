@@ -15,9 +15,8 @@ class MakeNSIS:
         self.file_path = file_path
         self.project_packages = project_packages
         self.file = None
-        # we run this in a special subfolder so put the installers one level up
+        # we run this in a special subfolder so designate the installers one level up
         self.installers_folder = os.path.join('..', 'installers')
-        osnap.util.rm_mk_tree(self.installers_folder)
 
     def write_line(self, l):
         self.file.write(l)
