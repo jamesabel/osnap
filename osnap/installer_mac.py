@@ -28,7 +28,7 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
             if self.verbose:
                 print('copying %s to %s' % (d, dst))
             distutils.dir_util.copy_tree(d, dst)
-        for f in ['main.py']:
+        for f in [osnap.const.main_program_py]:
             if self.verbose:
                 print('copying %s to %s' % (f, macos_path))
             if os.path.exists(f):

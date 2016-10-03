@@ -24,7 +24,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
                                      os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir,
                                                   osnap.const.python_folder))
         win_app_dir_path = os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir)
-        for f in ['main.py']:
+        for f in [osnap.const.main_program_py]:
             if self.verbose:
                 print('copying %s to %s' % (f, win_app_dir_path))
             if os.path.exists(f):
