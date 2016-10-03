@@ -10,10 +10,9 @@ class MakeNSIS:
     # basic format is from:
     # http://nsis.sourceforge.net/A_simple_installer_with_start_menu_shortcut_and_uninstaller
 
-    def __init__(self, defines, file_path, project_packages=[]):
+    def __init__(self, defines, file_path):
         self.defines = defines  # ordered dict with the defines
         self.file_path = file_path
-        self.project_packages = project_packages
         self.file = None
         # we run this in a special subfolder so designate the installers one level up
         self.installers_folder = os.path.join('..', 'installers')
@@ -130,22 +129,22 @@ class MakeNSIS:
         self.write_line('rmDir "$SMPROGRAMS\\${COMPANYNAME}"')
 
         self.write_line('# Remove files')
-        self.write_line('RMDir /r $INSTDIR\\%s' % osnap.const.python_folder)
-        for project_package in self.project_packages:
-            self.write_line('RMDir /r $INSTDIR\\%s' % project_package)
-        self.write_line('delete $INSTDIR\\${EXENAME}')
+        self.write_line('RMDir /r $INSTDIR\\%s' % osnap.const.windows_app_dir)  # all the user files should be here
+        # use these patterns so that we delete the uninstaller last
         self.write_line('delete $INSTDIR\\LICENSE')
-        self.write_line('delete $INSTDIR\\*.ico')
-        self.write_line('delete $INSTDIR\\*.md')
-        self.write_line('delete $INSTDIR\\*.py')
+        self.write_line('delete $INSTDIR\\COPY')  # for GPL
+        self.write_line('delete $INSTDIR\\${EXENAME}')
         self.write_line('delete $INSTDIR\\*.pyd')
-        self.write_line('delete $INSTDIR\\*.exe')
+        self.write_line('delete $INSTDIR\\*.dll')
+        self.write_line('delete $INSTDIR\\*.ico')
+        self.write_line('delete $INSTDIR\\*.nsis')
 
         self.write_line('# Always delete uninstaller as the last action')
         self.write_line('delete $INSTDIR\\uninstall.exe')
 
         self.write_line('# Try to remove the install directory - this will only happen if it is empty')
         self.write_line('rmDir $INSTDIR')
+        self.write_line('rmDir "$PROGRAMFILES\${COMPANYNAME}"')
 
         self.write_line('# Remove uninstaller information from the registry')
         self.write_line('DeleteRegKey HKLM "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${COMPANYNAME} ${APPNAME}"')

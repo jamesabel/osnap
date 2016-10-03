@@ -66,7 +66,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
         if self.verbose:
             print('writing %s' % nsis_file_name)
-        nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name, [self.application_name])
+        nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name)
         nsis.write_all()
 
         shutil.copy(nsis_file_name, osnap.const.dist_dir)
