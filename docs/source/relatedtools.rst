@@ -11,6 +11,7 @@ Several tools already exist in this space, such as:
 - `pyinstaller <http://www.pyinstaller.org/>`_
 - `bbfreeze <https://pypi.python.org/pypi/bbfreeze>`_
 - `pynsist <https://github.com/takluyver/pynsist>`_
+- `pyqtdeploy <https://www.riverbankcomputing.com/software/pyqtdeploy/>`_
 
 However, ``osnap`` provides some specific features not found in these other tools:
 
