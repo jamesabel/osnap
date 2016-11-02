@@ -1,5 +1,6 @@
 
 import argparse
+import logging
 
 import osnap.osnapy_win
 import osnap.osnapy_mac
@@ -34,7 +35,6 @@ def make_osnapy(python_version, application_name=None, clean_cache=False, verbos
 
 
 def main():
-
     parser = argparse.ArgumentParser(description='create the osnapy Python environment',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-a', '--application', default=None, help='application name (required for OSX/MacOS)')
@@ -47,7 +47,10 @@ def main():
 
     args = parser.parse_args()
     if args.verbose:
-        print('verbose on')
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+        logging.getLogger().debug("Verbose mode on")
     make_osnapy(args.python_version, args.application, args.clear, args.verbose, args.egenix_pyrun, args.force_uninstall)
 
 if __name__ == '__main__':
