@@ -1,5 +1,6 @@
-
+import logging
 import os
+import platform
 import subprocess
 import shutil
 import glob
@@ -10,6 +11,7 @@ import osnap.const
 import osnap.util
 import osnap.osnapy_base
 
+LOGGER = logging.getLogger(__name__)
 
 class OsnapyWin(osnap.osnapy_base.OsnapyBase):
 
@@ -24,7 +26,13 @@ class OsnapyWin(osnap.osnapy_base.OsnapyBase):
         osnap.util.make_dir(cache_folder, self.clean_cache, self.verbose)
 
         # get the embeddable Python .zip
-        zip_file = 'python-%s-embed-amd64.zip' % self.python_version
+        if platform.machine() == 'AMD64':
+            zip_file = 'python-%s-embed-amd64.zip' % self.python_version
+        elif platform.machine() == 'x86':
+            zip_file = 'python-%s-embed-win32.zip' % self.python_version
+        else:
+            raise Exception("Sorry, we don't currently support your architecture on windows ({}). Please submit a ticket at https://github.com/jamesabel/osnap/issues/".format(platform.machine()))
+
         zip_url = 'https://www.python.org/ftp/python/%s/%s' % (self.python_version, zip_file)
         if osnap.util.get(zip_url, cache_folder, zip_file, self.python_version):
             osnap.util.extract(cache_folder, zip_file, osnap.const.python_folder, self.verbose)
@@ -51,10 +59,10 @@ class OsnapyWin(osnap.osnapy_base.OsnapyBase):
         # get and install pip
         get_pip_file = 'get-pip.py'
         osnap.util.get('https://bootstrap.pypa.io/get-pip.py', cache_folder, get_pip_file, self.verbose)
+
         shutil.copyfile(os.path.join(cache_folder, get_pip_file), os.path.join(osnap.const.python_folder, get_pip_file))
         cmd = [python_path, os.path.join(osnap.const.python_folder, get_pip_file)]
-        if self.verbose:
-            print('executing %s' % str(cmd))
+        LOGGER.debug('Executing %s', cmd)
         subprocess.check_call(cmd)
 
     def pip(self, package):
