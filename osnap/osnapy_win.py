@@ -33,19 +33,18 @@ class OsnapyWin(osnap.osnapy_base.OsnapyBase):
         else:
             raise Exception("Sorry, we don't currently support your architecture on windows ({}). Please submit a ticket at https://github.com/jamesabel/osnap/issues/".format(platform.machine()))
 
-        zip_url = 'https://www.python.org/ftp/python/%s/%s' % (self.python_version, zip_file)
+        zip_url = 'https://www.python.org/ftp/python/{}/{}'.format(self.python_version, zip_file)
+        LOGGER.debug("Getting embeddable python from %s", zip_url)
         if osnap.util.get(zip_url, cache_folder, zip_file, self.python_version):
             osnap.util.extract(cache_folder, zip_file, osnap.const.python_folder, self.verbose)
         else:
-            print('could not get embeddable Python (%s from %s) - exiting' % (zip_file, zip_url))
-            exit()
+            raise Exception('could not get embeddable Python ({} from {}) - exiting'.format(zip_file, zip_url))
 
         # we need to use an unzipped version of pythonXX.zip since some packages can't read into the .zip
         # (e.g. https://bugs.python.org/issue24960)
         zip_list = glob.glob(os.path.join(osnap.const.python_folder, 'python*.zip'))
         if len(zip_list) != 1:
-            print('error : too many zip files in %s' % str(zip_list))
-            return False
+            raise Exception('too many zip files in {}'.format(zip_list))
         pythonxx_zip_path = zip_list[0]
         temp_file = 'temp.zip'
         temp_path = os.path.join(osnap.const.python_folder, temp_file)
@@ -72,8 +71,7 @@ class OsnapyWin(osnap.osnapy_base.OsnapyBase):
         else:
             cmd.append(package)
         cmd_str = ' '.join(cmd)
-        if self.verbose:
-            print('executing %s' % str(cmd_str))
+        LOGGER.debug('executing %s', cmd_str)
         return subprocess.check_call(cmd_str, shell=True)
 
 
