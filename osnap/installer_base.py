@@ -12,16 +12,23 @@ import osnap.util
 LOGGER = logging.getLogger(__name__)
 
 class OsnapInstaller:
-    def __init__(self, python_version, application_name, author, description, url, compile_code, verbose,
-                 use_pyrun=False):
-        self.python_version = python_version
-        self.application_name = application_name
-        self.author = author
-        self.description = description
-        self.url = url
-        self.compile_code = compile_code
-        self.verbose = verbose
-        self.use_pyrun = use_pyrun
+    def __init__(self,
+            python_version,
+            application_name,
+            author,
+            description,
+            url,
+            compile_code,
+            use_pyrun=False,
+            create_installer=True):
+        self.application_name   = application_name
+        self.author             = author
+        self.compile_code       = compile_code
+        self.create_installer   = create_installer
+        self.description        = description
+        self.python_version     = python_version
+        self.url                = url
+        self.use_pyrun          = use_pyrun
 
     def make_installer(self):
 
