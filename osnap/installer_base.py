@@ -1,4 +1,4 @@
-
+import logging
 import os
 import py_compile
 import fnmatch
@@ -9,6 +9,7 @@ import site
 import osnap.const
 import osnap.util
 
+LOGGER = logging.getLogger(__name__)
 
 class OsnapInstaller:
     def __init__(self, python_version, application_name, author, description, url, compile_code, verbose,
@@ -28,8 +29,7 @@ class OsnapInstaller:
         # distribution size smaller.  However, just in case the installed program is having an issue with non-compiled
         # code (e.g. it's been installed into a read-only area), we have this option.
         if self.compile_code:
-            if self.verbose:
-                print('compiling')
+            LOGGER.debug('compiling')
             for root, dirnames, filenames in os.walk(osnap.const.python_folder):
                 for filename in fnmatch.filter(filenames, '*.py'):
                     path = os.path.join(root, filename)
@@ -44,7 +44,9 @@ class OsnapInstaller:
         # find zip
         launch_zip_name = osnap.util.get_launch_name() + '.zip'
         locations = set()
+        LOGGER.debug("Looking for launch zip '%s'", launch_zip_name)
         for d in site.getsitepackages():
+            LOGGER.debug("Searching site package %s", d)
             for r, _, fs in os.walk(d):
                 for f in fs:
                     if f == launch_zip_name:
@@ -53,13 +55,10 @@ class OsnapInstaller:
                             p = p.lower()
                         locations.add(p)
         if len(locations) != 1:
-            s = 'error : looking for exactly one %s : found %s' % (launch_zip_name, str(locations))
-            print(s)
-            sys.exit(s)
+            raise Exception('Looking for exactly one {} : found {}'.format(launch_zip_name, locations))
         launch_zip_path = locations.pop()
 
-        if self.verbose:
-            print('unzipping %s to %s' % (launch_zip_path, destination))
+        LOGGER.debug('unzipping %s to %s', launch_zip_path, destination)
         zip_ref = zipfile.ZipFile(launch_zip_path, 'r')
         zip_ref.extractall(destination)
         zip_ref.close()
