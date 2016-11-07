@@ -1,4 +1,4 @@
-
+import logging
 import argparse
 
 import osnap.const
@@ -22,6 +22,8 @@ def make_installer(python_version, application_name, author='', description='', 
 
 
 def main():
+    LOGGER = logging.getLogger()
+
     parser = argparse.ArgumentParser(description='create the osnap installer',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-a', '--application', default=None, help='application name (required for OSX/MacOS)')
@@ -33,8 +35,17 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='print more verbose messages')
     args = parser.parse_args()
 
-    make_installer(args.python_version, args.application, args.name_of_author, args.description, args.url,
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+        logging.getLogger().debug('Verbose mode on')
+    else:
+        logging.basicConfig(level=logging.INFO)
+
+    try:
+        make_installer(args.python_version, args.application, args.name_of_author, args.description, args.url,
                    True, args.verbose, args.egenix_pyrun)
+    except Exception as e:
+        LOGGER.error("Fatal error: %s", e)
 
 if __name__ == '__main__':
     main()
