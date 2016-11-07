@@ -20,8 +20,11 @@ class OsnapInstaller:
             url,
             compile_code,
             use_pyrun=False,
-            create_installer=True):
+            create_installer=True,
+            architecture='64bit',
+            ):
         self.application_name   = application_name
+        self.architecture       = architecture
         self.author             = author
         self.compile_code       = compile_code
         self.create_installer   = create_installer
@@ -49,7 +52,7 @@ class OsnapInstaller:
     def unzip_launcher(self, destination):
 
         # find zip
-        launch_zip_name = osnap.util.get_launch_name() + '.zip'
+        launch_zip_name = osnap.util.get_launch_name(self.architecture) + '.zip'
         locations = set()
         LOGGER.debug("Looking for launch zip '%s'", launch_zip_name)
         possible_locations = site.getsitepackages() + [os.path.dirname(__file__)]

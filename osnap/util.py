@@ -30,9 +30,18 @@ def get_os_name():
         raise NotImplementedError
 
 
-def get_launch_name():
-    return 'launch' + get_os_name()
-
+def get_launch_name(architecture):
+    if is_mac():
+        return 'launchmac'
+    elif is_windows():
+        if architecture == '32bit':
+            return 'launchwin-x86'
+        elif architecture == '64bit':
+            return 'launchwin-amd64'
+        else:
+            raise Exception("Unrecognized architecture {} for windows".format(architecture))
+    else:
+        raise Exception("Unrecognized operating system")
 
 def make_dir(path, remove, verbose):
     if remove and os.path.exists(path):

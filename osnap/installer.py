@@ -11,12 +11,13 @@ import osnap.installer_win
 def make_installer(
         python_version,
         application_name,
-        author                = '',
-        description            = '',
-        url                    = '',
+        author              = '',
+        description         = '',
+        url                 = '',
         compile_code        = True,
-        use_pyrun            = False,
+        use_pyrun           = False,
         create_installer    = True,
+        architecture        = '64bit',
         ):
     if osnap.util.is_mac():
         class_ = osnap.installer_mac.OsnapInstallerMac
@@ -34,6 +35,7 @@ def make_installer(
         compile_code,
         use_pyrun,
         create_installer,
+        architecture,
     )
 
     installer.make_installer()
@@ -45,6 +47,7 @@ def main():
     parser = argparse.ArgumentParser(description='create the osnap installer',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-a', '--application', default=None, help='application name (required for OSX/MacOS)')
+    parser.add_argument('-A', '--architecture', default='64bit', choices=['64bit', '32bit'], help="The architecture to use for the launcher")
     parser.add_argument('-b', '--binary-only', action='store_true', default=False, help=(
         "Only produce the binary of the script as an executable without creating an installer. This avoids the NSIS requirement on windows"
     ))
@@ -71,7 +74,8 @@ def main():
             args.url,
             True,
             args.egenix_pyrun,
-            create_installer = not args.binary_only
+            create_installer    = not args.binary_only,
+            architecture        = args.architecture
         )
     except Exception as e:
         LOGGER.exception("Fatal error: %s", e)
