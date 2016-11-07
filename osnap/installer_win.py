@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import collections
@@ -9,6 +10,8 @@ import osnap.util
 import osnap.make_nsis
 import osnap.installer_base
 
+
+LOGGER = logging.getLogger(__name__)
 
 class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
