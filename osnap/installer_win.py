@@ -17,8 +17,8 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
     def make_installer(self):
 
-        osnap.util.rm_mk_tree(osnap.const.dist_dir, self.verbose)
-        osnap.util.rm_mk_tree('installers', self.verbose)
+        osnap.util.rm_mk_tree(osnap.const.dist_dir)
+        osnap.util.rm_mk_tree('installers')
         self.unzip_launcher(osnap.const.dist_dir)
         distutils.dir_util.copy_tree(self.application_name, os.path.join(osnap.const.dist_dir,
                                                                          osnap.const.windows_app_dir,
@@ -46,6 +46,10 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
             shutil.copy2(f, osnap.const.dist_dir)
 
         # write NSIS script
+        if not self.create_installer:
+            LOGGER.debug("Not creating NSIS installer - it was not requested")
+            return
+
         nsis_file_name = self.application_name + '.nsis'
 
         nsis_defines = collections.OrderedDict()

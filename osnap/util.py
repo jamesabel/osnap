@@ -93,8 +93,7 @@ def rm_mk_tree(dir_path, verbose=False):
 
     # fancy rmtree, since for some reason shutil.rmtree can return before the tree is actually removed
     count = 0
-    if verbose:
-        print('removing %s (%s)' % (dir_path, os.path.abspath(dir_path)))
+    LOGGER.debug('removing %s (%s)', dir_path, os.path.abspath(dir_path))
     while os.path.exists(dir_path) and count < 30:
         try:
             shutil.rmtree(dir_path)
@@ -102,16 +101,13 @@ def rm_mk_tree(dir_path, verbose=False):
             pass
         except IOError:
             if count > 1:
-                print('retrying removal of %s - perhaps you need to run this as sudo?' % dir_path)
+                LOGGER.info('retrying removal of %s - perhaps you need to run this as sudo?', dir_path)
             time.sleep(2)
         count += 1
     if os.path.exists(dir_path):
-        msg = 'error: could not remove %s - exiting' % dir_path
-        print(msg)
-        exit(msg)
+        raise Exception('error: could not remove {} - exiting'.format(dir_path))
 
-    if verbose:
-        print('making %s (%s)' % (dir_path, os.path.abspath(dir_path)))
+    LOGGER.info('making %s (%s)', dir_path, os.path.abspath(dir_path))
     os.makedirs(dir_path)
 
     return count > 0
