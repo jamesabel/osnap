@@ -72,7 +72,7 @@ def get(url, destination_folder, file_name, verbose):
     if os.path.exists(destination_path):
         LOGGER.info('using existing copy of %s from %s', file_name, os.path.abspath(destination_path))
     else:
-        LOGGER.debug('get %s to %s', url, destination_path)
+        LOGGER.info('get %s to %s', url, destination_path)
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(destination_path, 'wb') as out_file:
