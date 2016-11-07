@@ -45,7 +45,8 @@ class OsnapInstaller:
         launch_zip_name = osnap.util.get_launch_name() + '.zip'
         locations = set()
         LOGGER.debug("Looking for launch zip '%s'", launch_zip_name)
-        for d in site.getsitepackages():
+        possible_locations = site.getsitepackages() + [os.path.dirname(__file__)]
+        for d in possible_locations:
             LOGGER.debug("Searching site package %s", d)
             for r, _, fs in os.walk(d):
                 for f in fs:
