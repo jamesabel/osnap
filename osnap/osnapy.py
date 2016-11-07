@@ -48,9 +48,9 @@ def main():
     args = parser.parse_args()
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
+        logging.getLogger().debug("Verbose mode on")
     else:
         logging.basicConfig(level=logging.INFO)
-        logging.getLogger().debug("Verbose mode on")
     make_osnapy(args.python_version, args.application, args.clear, args.verbose, args.egenix_pyrun, args.force_uninstall)
 
 if __name__ == '__main__':

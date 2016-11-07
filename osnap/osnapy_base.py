@@ -15,13 +15,9 @@ class OsnapyBase():
         raise NotImplementedError
 
     def create_python(self):
-        """
-        Create a full, stand-alone python installation with the required packages
-        """
+        "Create a full, stand-alone python installation with the required packages"
         raise NotImplementedError  # derived class provides this
 
     def add_package(self, package):
-        if self.verbose:
-            print('adding %s to python environment' % str(package))
-        # derived class must provide the functionality to add the package
+        raise NotImplementedError  # derived class provides this
 
