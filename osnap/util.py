@@ -1,4 +1,4 @@
-
+import logging
 import platform
 import os
 import shutil
@@ -10,6 +10,7 @@ import requests
 
 import osnap.const
 
+LOGGER = logging.getLogger(__name__)
 
 def is_windows():
     return platform.system().lower()[0] == 'w'
@@ -35,19 +36,16 @@ def get_launch_name():
 
 def make_dir(path, remove, verbose):
     if remove and os.path.exists(path):
-        if verbose:
-            print('removing : %s' % path)
+        LOGGER.debug('removing : %s', path)
         shutil.rmtree(path)
     if not os.path.exists(path):
-        if verbose:
-            print('making folder : %s' % path)
+        LOGGER.debug('making folder : %s', path)
         os.mkdir(path)
 
 
 def extract(source_folder, source_file, destination_folder, verbose):
     source = os.path.join(source_folder, source_file)
-    if verbose:
-        print('extracting %s to %s' % (source, destination_folder))
+    LOGGER.debug('extracting %s to %s', source, destination_folder)
     extension = source_file[source_file.rfind('.')+1:]
     if extension == 'zip':
         with zipfile.ZipFile(source) as zf:
@@ -60,14 +58,11 @@ def extract(source_folder, source_file, destination_folder, verbose):
         with tarfile.open(source) as tf:
             tf.extractall(destination_folder)
     else:
-        print('error : unsupported file type %s (extension : %s)' % (source_file, extension))
-        exit()
+        raise Exception('Unsupported file type {} (extension : {})'.format(source_file, extension))
 
 
 def tgz(source_dir, tgz_file_path, verbose):
-    if verbose:
-        print('tgz-ing %s (%s) to %s (%s)' % (source_dir, os.path.abspath(source_dir), tgz_file_path,
-                                              os.path.abspath(tgz_file_path)))
+    LOGGER.debug('tgz-ing %s (%s) to %s (%s)', source_dir, os.path.abspath(source_dir), tgz_file_path, os.path.abspath(tgz_file_path))
     with tarfile.open(tgz_file_path, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
@@ -75,19 +70,16 @@ def tgz(source_dir, tgz_file_path, verbose):
 def get(url, destination_folder, file_name, verbose):
     destination_path = os.path.join(destination_folder, file_name)
     if os.path.exists(destination_path):
-        if verbose:
-            print('using existing copy of %s from %s' % (file_name, os.path.abspath(destination_path)))
+        LOGGER.info('using existing copy of %s from %s', file_name, os.path.abspath(destination_path))
     else:
-        if verbose:
-            print('get %s to %s' % (url, destination_path))
+        LOGGER.debug('get %s to %s', url, destination_path)
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(destination_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
             del response
         else:
-            print('error getting %s from %s' % (file_name, url))
-            return False
+            raise Exception('error getting {} from {}'.format(file_name, url))
     return True
 
 
