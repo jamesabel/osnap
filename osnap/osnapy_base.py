@@ -19,7 +19,5 @@ class OsnapyBase():
         raise NotImplementedError  # derived class provides this
 
     def add_package(self, package):
-        if self.verbose:
-            print('adding %s to python environment' % str(package))
-        # derived class must provide the functionality to add the package
+        raise NotImplementedError  # derived class provides this
 
