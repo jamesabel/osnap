@@ -74,7 +74,7 @@ def main():
             create_installer = not args.binary_only
         )
     except Exception as e:
-        LOGGER.error("Fatal error: %s", e)
+        LOGGER.exception("Fatal error: %s", e)
 
 if __name__ == '__main__':
     main()
