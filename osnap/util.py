@@ -1,4 +1,4 @@
-
+import logging
 import platform
 import os
 import shutil
@@ -10,6 +10,7 @@ import requests
 
 import osnap.const
 
+LOGGER = logging.getLogger(__name__)
 
 def is_windows():
     return platform.system().lower()[0] == 'w'
@@ -29,25 +30,31 @@ def get_os_name():
         raise NotImplementedError
 
 
-def get_launch_name():
-    return 'launch' + get_os_name()
-
+def get_launch_name(architecture):
+    if is_mac():
+        return 'launchmac'
+    elif is_windows():
+        if architecture == '32bit':
+            return 'launchwin-x86'
+        elif architecture == '64bit':
+            return 'launchwin-amd64'
+        else:
+            raise Exception("Unrecognized architecture {} for windows".format(architecture))
+    else:
+        raise Exception("Unrecognized operating system")
 
 def make_dir(path, remove, verbose):
     if remove and os.path.exists(path):
-        if verbose:
-            print('removing : %s' % path)
+        LOGGER.debug('removing : %s', path)
         shutil.rmtree(path)
     if not os.path.exists(path):
-        if verbose:
-            print('making folder : %s' % path)
+        LOGGER.debug('making folder : %s', path)
         os.mkdir(path)
 
 
 def extract(source_folder, source_file, destination_folder, verbose):
     source = os.path.join(source_folder, source_file)
-    if verbose:
-        print('extracting %s to %s' % (source, destination_folder))
+    LOGGER.debug('extracting %s to %s', source, destination_folder)
     extension = source_file[source_file.rfind('.')+1:]
     if extension == 'zip':
         with zipfile.ZipFile(source) as zf:
@@ -60,14 +67,11 @@ def extract(source_folder, source_file, destination_folder, verbose):
         with tarfile.open(source) as tf:
             tf.extractall(destination_folder)
     else:
-        print('error : unsupported file type %s (extension : %s)' % (source_file, extension))
-        exit()
+        raise Exception('Unsupported file type {} (extension : {})'.format(source_file, extension))
 
 
 def tgz(source_dir, tgz_file_path, verbose):
-    if verbose:
-        print('tgz-ing %s (%s) to %s (%s)' % (source_dir, os.path.abspath(source_dir), tgz_file_path,
-                                              os.path.abspath(tgz_file_path)))
+    LOGGER.debug('tgz-ing %s (%s) to %s (%s)', source_dir, os.path.abspath(source_dir), tgz_file_path, os.path.abspath(tgz_file_path))
     with tarfile.open(tgz_file_path, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
@@ -75,19 +79,16 @@ def tgz(source_dir, tgz_file_path, verbose):
 def get(url, destination_folder, file_name, verbose):
     destination_path = os.path.join(destination_folder, file_name)
     if os.path.exists(destination_path):
-        if verbose:
-            print('using existing copy of %s from %s' % (file_name, os.path.abspath(destination_path)))
+        LOGGER.info('using existing copy of %s from %s', file_name, os.path.abspath(destination_path))
     else:
-        if verbose:
-            print('get %s to %s' % (url, destination_path))
+        LOGGER.info('get %s to %s', url, destination_path)
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(destination_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
             del response
         else:
-            print('error getting %s from %s' % (file_name, url))
-            return False
+            raise Exception('error getting {} from {}'.format(file_name, url))
     return True
 
 
@@ -101,8 +102,7 @@ def rm_mk_tree(dir_path, verbose=False):
 
     # fancy rmtree, since for some reason shutil.rmtree can return before the tree is actually removed
     count = 0
-    if verbose:
-        print('removing %s (%s)' % (dir_path, os.path.abspath(dir_path)))
+    LOGGER.debug('removing %s (%s)', dir_path, os.path.abspath(dir_path))
     while os.path.exists(dir_path) and count < 30:
         try:
             shutil.rmtree(dir_path)
@@ -110,16 +110,13 @@ def rm_mk_tree(dir_path, verbose=False):
             pass
         except IOError:
             if count > 1:
-                print('retrying removal of %s - perhaps you need to run this as sudo?' % dir_path)
+                LOGGER.info('retrying removal of %s - perhaps you need to run this as sudo?', dir_path)
             time.sleep(2)
         count += 1
     if os.path.exists(dir_path):
-        msg = 'error: could not remove %s - exiting' % dir_path
-        print(msg)
-        exit(msg)
+        raise Exception('error: could not remove {} - exiting'.format(dir_path))
 
-    if verbose:
-        print('making %s (%s)' % (dir_path, os.path.abspath(dir_path)))
+    LOGGER.info('making %s (%s)', dir_path, os.path.abspath(dir_path))
     os.makedirs(dir_path)
 
     return count > 0

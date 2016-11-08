@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import collections
@@ -10,12 +11,14 @@ import osnap.make_nsis
 import osnap.installer_base
 
 
+LOGGER = logging.getLogger(__name__)
+
 class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
     def make_installer(self):
 
-        osnap.util.rm_mk_tree(osnap.const.dist_dir, self.verbose)
-        osnap.util.rm_mk_tree('installers', self.verbose)
+        osnap.util.rm_mk_tree(osnap.const.dist_dir)
+        osnap.util.rm_mk_tree('installers')
         self.unzip_launcher(osnap.const.dist_dir)
         distutils.dir_util.copy_tree(self.application_name, os.path.join(osnap.const.dist_dir,
                                                                          osnap.const.windows_app_dir,
@@ -25,19 +28,17 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
                                                   osnap.const.python_folder))
         win_app_dir_path = os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir)
         for f in [osnap.const.main_program_py]:
-            if self.verbose:
-                print('copying %s to %s' % (f, win_app_dir_path))
+            LOGGER.debug('copying %s to %s', f, win_app_dir_path)
             if os.path.exists(f):
                 shutil.copy2(f, win_app_dir_path)
             else:
-                print('error : expected %s (%s) to exist but it does not' % (f, os.path.abspath(f)))
+                raise Exception('expected {} ({}) to exist but it does not'.format(f, os.path.abspath(f)))
 
         # application .exe
         exe_name = self.application_name + '.exe'
         orig_launch_exe_path = os.path.join(osnap.const.dist_dir, 'launch.exe')
         dist_exe_path = os.path.join(osnap.const.dist_dir, exe_name)
-        if self.verbose:
-            print('moving %s to %s' % (orig_launch_exe_path, dist_exe_path))
+        LOGGER.debug('moving %s to %s', orig_launch_exe_path, dist_exe_path)
         os.rename(orig_launch_exe_path, dist_exe_path)
 
         # support files
@@ -45,6 +46,10 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
             shutil.copy2(f, osnap.const.dist_dir)
 
         # write NSIS script
+        if not self.create_installer:
+            LOGGER.debug("Not creating NSIS installer - it was not requested")
+            return
+
         nsis_file_name = self.application_name + '.nsis'
 
         nsis_defines = collections.OrderedDict()
@@ -64,8 +69,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         nsis_defines['UPDATEURL'] = self.url  # "Product Updates" link
         nsis_defines['ABOUTURL'] = self.url  # "Publisher" link
 
-        if self.verbose:
-            print('writing %s' % nsis_file_name)
+        LOGGER.debug('writing %s', nsis_file_name)
         nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name)
         nsis.write_all()
 
@@ -76,10 +80,9 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         nsis_path = os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis.exe')
         if os.path.exists(nsis_path):
             pkgproj_command = [nsis_path, nsis_file_name]
-            if self.verbose:
-                print('%s' % str(pkgproj_command))
+            LOGGER.debug('Executing %s', pkgproj_command)
             subprocess.check_call(pkgproj_command)
         else:
-            print('error: NSIS tool could not be found (expected at %s)' % nsis_path)
-            print('See http://nsis.sourceforge.net for information on how to obtain the NSIS '
-                  '(Nullsoft Scriptable Install System) tool.')
+            raise Exception(('NSIS tool could not be found (expected at {})'
+                'See http://nsis.sourceforge.net for information on how to obtain the NSIS '
+                '(Nullsoft Scriptable Install System) tool.').format(nsis_path))
