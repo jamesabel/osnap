@@ -1,14 +1,13 @@
     
 # launch.pyw - a .pyw since we're launching without a console window
-
-import os
-import sys
-import subprocess
+import appdirs
+import glob
 import logging
 import logging.config
+import os
 import platform
-import glob
-import appdirs
+import sys
+import subprocess
 
 # Just for the launcher, not the user's app that OSNAP is launching
 AUTHOR = 'abel'
