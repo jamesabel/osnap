@@ -4,12 +4,19 @@
 
 
 class OsnapyBase():
-    def __init__(self, python_version, application_name=None, clean_cache=False, force_uninstalls=False, verbose=False):
-        self.python_version = python_version
-        self.application_name = application_name
-        self.clean_cache = clean_cache
-        self.force_uninstalls = force_uninstalls
-        self.verbose = verbose
+    def __init__(
+            self,
+            python_version,
+            application_name    = None,
+            clean_cache         = False,
+            force_uninstalls    = False,
+            architecture        = '64bit',
+        ):
+        self.architecture       = architecture
+        self.application_name   = application_name
+        self.clean_cache        = clean_cache
+        self.force_uninstalls   = force_uninstalls
+        self.python_version     = python_version
 
     def pip(self, package):
         raise NotImplementedError

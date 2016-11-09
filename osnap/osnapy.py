@@ -8,24 +8,26 @@ import osnap.osnapy_mac_pyrun
 import osnap.util
 import osnap.const
 
+LOGGER = logging.getLogger('osnapy')
 
-def make_osnapy(python_version, application_name=None, clean_cache=False, verbose=False, use_pyrun=False,
-                force_app_uninstall=False):
+def make_osnapy(
+        python_version,
+        application_name        = None,
+        clean_cache             = False,
+        use_pyrun               = False,
+        force_app_uninstall     = False,
+        architecture            = '64bit',
+        ):
+    LOGGER.debug('creating osnapy Python environment using python %s' % python_version)
     if osnap.util.is_mac() and application_name is None:
-        s = 'error : must specify the application name - use -h for help'
-        print(s)
-        exit(s)
-    if verbose:
-        print('creating osnapy Python environment using python %s' % python_version)
+        raise Exception('must specify the application name on mac')
     if osnap.util.is_windows():
-        osnapy = osnap.osnapy_win.OsnapyWin(python_version, application_name, clean_cache, verbose=verbose)
+        osnapy = osnap.osnapy_win.OsnapyWin(python_version, application_name, clean_cache, architecture=architecture)
     elif osnap.util.is_mac():
         if use_pyrun:
-            osnapy = osnap.osnapy_mac_pyrun.OsnapyMacPyrun(python_version, application_name, clean_cache,
-                                                           verbose=verbose)
+            osnapy = osnap.osnapy_mac_pyrun.OsnapyMacPyrun(python_version, application_name, clean_cache)
         else:
-            osnapy = osnap.osnapy_mac.OsnapyMac(python_version, application_name, clean_cache, force_app_uninstall,
-                                                verbose)
+            osnapy = osnap.osnapy_mac.OsnapyMac(python_version, application_name, clean_cache, force_app_uninstall)
     else:
         raise NotImplementedError
     osnapy.create_python()
@@ -38,6 +40,7 @@ def main():
     parser = argparse.ArgumentParser(description='create the osnapy Python environment',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-a', '--application', default=None, help='application name (required for OSX/MacOS)')
+    parser.add_argument('-A', '--architecture', default='64bit', choices=['64bit', '32bit'], help='The architecture to use for the launcher')
     parser.add_argument('-p', '--python_version', default=osnap.const.default_python_version, help='python version')
     parser.add_argument('-c', '--clear', action='store_true', default=False, help='clear cache')
     parser.add_argument('-e', '--egenix_pyrun', action='store_true', default=False, help='use eGenix™ PyRun™')
@@ -51,7 +54,14 @@ def main():
         logging.getLogger().debug("Verbose mode on")
     else:
         logging.basicConfig(level=logging.INFO)
-    make_osnapy(args.python_version, args.application, args.clear, args.verbose, args.egenix_pyrun, args.force_uninstall)
+    make_osnapy(
+        python_version      = args.python_version,
+        application_name    = args.application,
+        clean_cache         = args.clear,
+        use_pyrun           = args.egenix_pyrun,
+        force_app_uninstall = args.force_uninstall,
+        architecture        = args.architecture
+    )
 
 if __name__ == '__main__':
     main()
