@@ -22,6 +22,7 @@ class OsnapInstaller:
             use_pyrun=False,
             create_installer=True,
             architecture='64bit',
+            variant='window',
             ):
         self.application_name   = application_name
         self.architecture       = architecture
@@ -30,6 +31,7 @@ class OsnapInstaller:
         self.create_installer   = create_installer
         self.description        = description
         self.python_version     = python_version
+        self.variant            = variant
         self.url                = url
         self.use_pyrun          = use_pyrun
 
@@ -52,7 +54,7 @@ class OsnapInstaller:
     def unzip_launcher(self, destination):
 
         # find zip
-        launch_zip_name = osnap.util.get_launch_name(self.architecture) + '.zip'
+        launch_zip_name = osnap.util.get_launch_name(self.architecture, self.variant) + '.zip'
         locations = set()
         LOGGER.debug("Looking for launch zip '%s'", launch_zip_name)
         possible_locations = site.getsitepackages() + [os.path.dirname(__file__)]

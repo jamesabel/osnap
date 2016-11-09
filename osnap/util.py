@@ -30,16 +30,21 @@ def get_os_name():
         raise NotImplementedError
 
 
-def get_launch_name(architecture):
+def get_launch_name(architecture, variant):
     if is_mac():
         return 'launchmac'
     elif is_windows():
-        if architecture == '32bit':
-            return 'launchwin-x86'
-        elif architecture == '64bit':
-            return 'launchwin-amd64'
+        if variant == 'console':
+            if architecture == '32bit':
+                return 'launchwin-x86-console'
+            elif architecture == '64bit':
+                return 'launchwin-amd64-console'
         else:
-            raise Exception("Unrecognized architecture {} for windows".format(architecture))
+            if architecture == '32bit':
+                return 'launchwin-x86-window'
+            elif architecture == '64bit':
+                return 'launchwin-amd64-window'
+        raise Exception("Unrecognized architecture {} for windows".format(architecture))
     else:
         raise Exception("Unrecognized operating system")
 
