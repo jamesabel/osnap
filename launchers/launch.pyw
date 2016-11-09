@@ -14,16 +14,54 @@ AUTHOR = 'abel'
 APPLICATION = 'osnap_launcher'
 PROGRAM = 'main.py'
 
-def launch():
-    VERSION = '0.0.4'
+def find_osnapy(path_leaf, python_folder):
+    """
+    go up directory levels until we find our python interpreter
+    this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
+    """
     LOGGER = logging.getLogger('osnap_launcher')
+    path = path_leaf
+    while path != os.path.dirname(path):
+        potential_path = os.path.join(path, 'osnapy')
+        if not os.path.exists(potential_path):
+            LOGGER.debug("No osnapy at %s", potential_path)
+        else:
+            LOGGER.debug("Found osnapy at %s", potential_path)
+            return potential_path
+
+        # special directories to follow back 'up'
+        for d in ['MacOS', 'osnapp']:
+            potential_path = os.path.join(path, d, 'osnapy')
+            if os.path.exists(potential_path):
+                LOGGER.debug("Found osnapy at %s", potential_path)
+                return potential_path
+        path = os.path.dirname(path)
+    raise Exception("Could not find osnapy in {}".format(path_leaf))
+
+def pick_osnapy(python_folder):
+    "Find the osnapy directory and chdir to it"
+    LOGGER = logging.getLogger('osnap_launcher')
+    for potential_path in [os.path.dirname(sys.argv[0]), os.getcwd()]:
+        try:
+            osnapy_path = find_osnapy(potential_path, python_folder)
+            parent = os.path.dirname(osnapy_path)
+            os.chdir(parent)
+            return
+        except Exception as e:
+            LOGGER.debug("%s", e)
+    raise Exception("Unable to find any osnapy directories")
+
+def launch():
+    VERSION = '0.0.5'
+    LOGGER = logging.getLogger('osnap_launcher')
+
 
     # conventions
     python_folder = 'osnapy'
 
     if platform.system().lower()[0] == 'w':
         # windows
-        python_binary = 'pythonw.exe'  # use pythonw so we don't get a console window to pop up
+        python_binary = 'pythonw.exe'
         python_path = os.path.join(python_folder, python_binary)
 
     elif platform.system().lower()[0] == 'd':
@@ -35,36 +73,13 @@ def launch():
 
     LOGGER.info('launcher version : %s', VERSION)
     LOGGER.info('sys.path : %s', sys.path)
+    LOGGER.info('sys.argv : %s', sys.argv)
     LOGGER.info('original cwd : %s', os.getcwd())
 
-    # go up directory levels until we find our python interpreter
-    # this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
-    shortest_path_string = 5  # tolerate all OS, e.g. c:\, /, etc.
-    loop_count = 0
-    while not os.path.exists(python_folder) and len(os.getcwd()) > shortest_path_string and loop_count < 10:
-        LOGGER.info('looking for %s at cwd : %s', python_path, os.getcwd())
-
-        if os.path.exists(python_folder):
-            LOGGER.info('%s found at %s', python_folder, os.getcwd())
-            break
-        # special directories to follow back 'up'
-        found_special = False
-        for d in ['MacOS', 'osnapp']:
-            if os.path.exists(d):
-                os.chdir(d)
-                LOGGER.info('%s found - did a chdir to %s', d, os.getcwd())
-                found_special = True
-                break
-        if not found_special:
-            try:
-                os.chdir('..')
-            except IOError:
-                LOGGER.error('IOError : while looking for %s in %s', python_folder, os.getcwd())
-                break
-        loop_count += 1
+    pick_osnapy(python_folder)
 
     if not os.path.exists(python_path):
-        raise Exception('{} does not exist (loop_count={}) - exiting'.format(python_path, loop_count))
+        raise Exception('{} does not exist - exiting'.format(python_path))
 
     # set up environment variables (if needed)
     if platform.system().lower()[0] == 'w':
@@ -117,17 +132,17 @@ def main():
         },
         'loggers'           : {
             ''              : {
-                'handlers'  : ['file'],
+                'handlers'  : ['file', 'console'],
                 'level'     : 'DEBUG',
                 'propogate' : True,
             },
         },
         'root'              : {
             'level'         : 'DEBUG',
-            'handlers'      : ['file'],
+            'handlers'      : ['file', 'console'],
         },
     })
-    
+    logging.getLogger().info("Installed logging")
     try:
         launch()
         return 0
