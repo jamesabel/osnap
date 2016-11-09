@@ -87,6 +87,9 @@ def launch():
 
 def main():
     logfile = os.path.join(appdirs.user_log_dir(APPLICATION, AUTHOR), 'osnap_launcher.log')
+    logdir = os.path.dirname(logfile)
+    if not os.path.exists(logdir):
+        os.makedirs(os.path.dirname(logfile))
     logging.config.dictConfig({
         'version'           : 1,
         'formatters'        : {
