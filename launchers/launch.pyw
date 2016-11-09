@@ -15,7 +15,7 @@ APPLICATION = 'osnap_launcher'
 PROGRAM = 'main.py'
 
 def launch():
-    VERSION = '0.0.3'
+    VERSION = '0.0.4'
     LOGGER = logging.getLogger('osnap_launcher')
 
     # conventions
