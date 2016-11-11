@@ -1,40 +1,67 @@
-
+    
 # launch.pyw - a .pyw since we're launching without a console window
-
+import appdirs
+import glob
+import logging
+import logging.config
 import os
+import platform
 import sys
 import subprocess
-import logging
-import platform
-import glob
-import appdirs
+
+# Just for the launcher, not the user's app that OSNAP is launching
+AUTHOR = 'abel'
+APPLICATION = 'osnap_launcher'
+PROGRAM = 'main.py'
+
+def find_osnapy(path_leaf, python_folder):
+    """
+    go up directory levels until we find our python interpreter
+    this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
+    """
+    LOGGER = logging.getLogger('osnap_launcher')
+    path = path_leaf
+    while path != os.path.dirname(path):
+        potential_path = os.path.join(path, 'osnapy')
+        if not os.path.exists(potential_path):
+            LOGGER.debug("No osnapy at %s", potential_path)
+        else:
+            LOGGER.debug("Found osnapy at %s", potential_path)
+            return potential_path
+
+        # special directories to follow back 'up'
+        for d in ['MacOS', 'osnapp']:
+            potential_path = os.path.join(path, d, 'osnapy')
+            if os.path.exists(potential_path):
+                LOGGER.debug("Found osnapy at %s", potential_path)
+                return potential_path
+        path = os.path.dirname(path)
+    raise Exception("Could not find osnapy in {}".format(path_leaf))
+
+def pick_osnapy(python_folder):
+    "Find the osnapy directory and chdir to it"
+    LOGGER = logging.getLogger('osnap_launcher')
+    for potential_path in [os.path.dirname(sys.argv[0]), os.getcwd()]:
+        try:
+            osnapy_path = find_osnapy(potential_path, python_folder)
+            parent = os.path.dirname(osnapy_path)
+            os.chdir(parent)
+            return
+        except Exception as e:
+            LOGGER.debug("%s", e)
+    raise Exception("Unable to find any osnapy directories")
 
 def launch():
+    VERSION = '0.0.5'
+    LOGGER = logging.getLogger('osnap_launcher')
 
-    VERSION = '0.0.3'
 
     # conventions
     python_folder = 'osnapy'
-    program = 'main.py'
-    author = 'abel'  # just for the launcher (not the user's app)
-    application_name = 'osnap_launcher'  # just for the launcher (not the user's app)
-
-    log_folder = appdirs.user_log_dir(application_name, author)
-    if not os.path.exists(log_folder):
-        os.makedirs(log_folder)
-    log_file_path = os.path.join(log_folder, 'launch.log')
-    print(log_file_path)
-
-    logger = logging.getLogger(application_name)
-    file_handler = logging.FileHandler(log_file_path)
-    formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    logger.setLevel(logging.INFO)
 
     if platform.system().lower()[0] == 'w':
         # windows
-        python_binary = 'pythonw.exe'  # use pythonw so we don't get a console window to pop up
+        python_binary = 'pythonw.exe'
         python_path = os.path.join(python_folder, python_binary)
 
     elif platform.system().lower()[0] == 'd':
@@ -44,42 +71,15 @@ def launch():
     else:
         raise NotImplementedError
 
-    logger.info('launcher version : %s' % VERSION)
-    logger.info('sys.path : %s' % sys.path)
-    logger.info('original cwd : %s' % os.getcwd())
+    LOGGER.info('launcher version : %s', VERSION)
+    LOGGER.info('sys.path : %s', sys.path)
+    LOGGER.info('sys.argv : %s', sys.argv)
+    LOGGER.info('original cwd : %s', os.getcwd())
 
-    # go up directory levels until we find our python interpreter
-    # this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
-    shortest_path_string = 5  # tolerate all OS, e.g. c:\, /, etc.
-    loop_count = 0
-    while not os.path.exists(python_folder) and len(os.getcwd()) > shortest_path_string and loop_count < 10:
-        logger.info('looking for %s at cwd : %s' % (python_path, os.getcwd()))
-
-        if os.path.exists(python_folder):
-            logger.info('%s found at %s' % (python_folder, os.getcwd()))
-            break
-        # special directories to follow back 'up'
-        found_special = False
-        for d in ['MacOS', 'osnapp']:
-            if os.path.exists(d):
-                os.chdir(d)
-                logger.info('%s found - did a chdir to %s' % (d, os.getcwd()))
-                found_special = True
-                break
-        if not found_special:
-            try:
-                os.chdir('..')
-            except IOError:
-                logger.error('IOError : while looking for %s in %s' % (python_folder, os.getcwd()))
-                break
-        loop_count += 1
+    pick_osnapy(python_folder)
 
     if not os.path.exists(python_path):
-        error_string = '%s does not exist (loop_count=%d) - exiting' % (python_path, loop_count)
-        logger.error(error_string)
-        print(error_string)
-        print('see %s' % log_file_path)
-        sys.exit(error_string)
+        raise Exception('{} does not exist - exiting'.format(python_path))
 
     # set up environment variables (if needed)
     if platform.system().lower()[0] == 'w':
@@ -88,21 +88,68 @@ def launch():
         site_packages_pattern = python_folder + os.sep + 'lib' + os.sep + 'python*' + os.sep + 'site-packages' + os.sep
         site_packages_glob = glob.glob(site_packages_pattern)
         if len(site_packages_glob) == 0:
-            error_string = '"%s" could not be found - exiting' % site_packages_pattern
-            logger.error(error_string)
-            sys.exit(error_string)
+            raise Exception('"{}" could not be found - exiting'.format(site_packages_pattern))
         elif len(site_packages_glob) > 1:
-            print('warning : "%s" yielded mulitple results' % str(site_packages_glob))
+            LOGGER.warning('warning : "%s" yielded mulitple results', site_packages_glob)
         env_vars = {'PYTHONPATH': site_packages_glob[0]}
     else:
-        raise NotImplementedError
+        raise NotImplementedError("The platform '{}' is not supported by OSNAP yet".format(platform.system()))
 
-    call_parameters = ' '.join([python_path, program])
-    logger.info('calling : %s with env=%s' % (str(call_parameters), str(env_vars)))
+    call_parameters = ' '.join([python_path, PROGRAM])
+    LOGGER.info('calling : %s with env=%s', call_parameters, env_vars)
     return_code = subprocess.call(call_parameters, env=env_vars, shell=True)
-    logger.info('return code : %s' % str(return_code))
+    LOGGER.info('return code : %s', return_code)
 
+def main():
+    logfile = os.path.join(appdirs.user_log_dir(APPLICATION, AUTHOR), 'osnap_launcher.log')
+    logdir = os.path.dirname(logfile)
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+    logging.config.dictConfig({
+        'version'           : 1,
+        'formatters'        : {
+            'detailed'      : {
+                'format'    : '[%(asctime)s] %(levelname)s pid:%(process)d %(name)s:%(lineno)d %(message)s',
+                'dateformat': '%d/%b/%Y:%H:%M:%S %z',
+            },
+            'simple'        : {
+                'format'    : '[%(asctime)s] %(levelname)s %(name)s:%(lineno)d %(message)s',
+                'dateformat': '%d/%b/%Y:%H:%M:%S %z',
+            },
+        },
+        'handlers'          : {
+            'console'       : {
+                'class'     : 'logging.StreamHandler',
+                'level'     : 'DEBUG',
+                'formatter' : 'simple',
+            },
+            'file'          : {
+                'class'     : 'logging.FileHandler',
+                'filename'  : logfile,
+                'formatter' : 'detailed',
+                'level'     : 'DEBUG',
+            },
+        },
+        'loggers'           : {
+            ''              : {
+                'handlers'  : ['file', 'console'],
+                'level'     : 'DEBUG',
+                'propogate' : True,
+            },
+        },
+        'root'              : {
+            'level'         : 'DEBUG',
+            'handlers'      : ['file', 'console'],
+        },
+    })
+    logging.getLogger().info("Installed logging")
+    try:
+        launch()
+        return 0
+    except Exception as e:
+        logging.getLogger().exception("Unhandled exception in launcher: %s", e)
+        return 1
 
 if __name__ == '__main__':
-    launch()
+    sys.exit(main())
 

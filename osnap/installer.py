@@ -18,6 +18,7 @@ def make_installer(
         use_pyrun           = False,
         create_installer    = True,
         architecture        = '64bit',
+        variant             = 'console',
         ):
     if osnap.util.is_mac():
         class_ = osnap.installer_mac.OsnapInstallerMac
@@ -36,6 +37,7 @@ def make_installer(
         use_pyrun,
         create_installer,
         architecture,
+        variant,
     )
 
     installer.make_installer()
@@ -51,6 +53,7 @@ def main():
     parser.add_argument('-b', '--binary-only', action='store_true', default=False, help=(
         "Only produce the binary of the script as an executable without creating an installer. This avoids the NSIS requirement on windows"
     ))
+    parser.add_argument('-c', '--console', action='store_true', default=False, help="Use a console for the application")
     parser.add_argument('-p', '--python_version', default=osnap.const.default_python_version, help='python version')
     parser.add_argument('-e', '--egenix_pyrun', action='store_true', default=False, help='use eGenix™ PyRun™')
     parser.add_argument('-n', '--name_of_author', default='', help='author name')
@@ -75,7 +78,8 @@ def main():
             True,
             args.egenix_pyrun,
             create_installer    = not args.binary_only,
-            architecture        = args.architecture
+            architecture        = args.architecture,
+            variant             = 'console' if args.console else 'window',
         )
     except Exception as e:
         LOGGER.exception("Fatal error: %s", e)

@@ -1,4 +1,4 @@
-
+import logging
 import subprocess
 import os
 
@@ -6,25 +6,25 @@ import osnap.const
 import osnap.util
 import osnap.osnapy_base
 
+LOGGER = logging.getLogger(__name__)
 
 class OsnapyMacPyrun(osnap.osnapy_base.OsnapyBase):
 
     def add_package(self, package):
         super().add_package(package)
         cmd = os.path.join(osnap.const.python_folder, 'bin', 'pip3') + ' install ' + package
-        if self.verbose:
-            print('executing %s' % str(cmd))
+        LOGGER.debug('executing %s', cmd)
         subprocess.check_call(cmd, shell=True, env={})
 
     def create_python(self):
 
         print('notice: the pyrun version is likely to be deprecated in favor of the osnap build')
 
-        osnap.util.make_dir(osnap.const.python_folder, True, self.verbose)
-        osnap.util.make_dir(osnap.const.CACHE_FOLDER, self.clean_cache, self.verbose)
+        osnap.util.make_dir(osnap.const.python_folder, True)
+        osnap.util.make_dir(osnap.const.CACHE_FOLDER, self.clean_cache)
 
         install_pyrun_script = 'install-pyrun.sh'
-        osnap.util.get('https://downloads.egenix.com/python/install-pyrun', '.', install_pyrun_script, self.verbose)
+        osnap.util.get('https://downloads.egenix.com/python/install-pyrun', '.', install_pyrun_script)
         os.chmod(install_pyrun_script, 0o755)
 
         cmd = [install_pyrun_script]
@@ -45,7 +45,6 @@ class OsnapyMacPyrun(osnap.osnapy_base.OsnapyBase):
 
         cmd = ' '.join(cmd)  # shell=True needs a string, not a list
 
-        if self.verbose:
-            print('cmd : %s' % str(cmd))
-            print('env : %s' % str(osnap.const.ENV))
+        LOGGER.debug('cmd : %s', cmd)
+        LOGGER.debug('env : %s', osnap.const.ENV)
         subprocess.run(cmd, shell=True, env=osnap.const.ENV)

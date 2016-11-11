@@ -30,20 +30,25 @@ def get_os_name():
         raise NotImplementedError
 
 
-def get_launch_name(architecture):
+def get_launch_name(architecture, variant):
     if is_mac():
         return 'launchmac'
     elif is_windows():
-        if architecture == '32bit':
-            return 'launchwin-x86'
-        elif architecture == '64bit':
-            return 'launchwin-amd64'
+        if variant == 'console':
+            if architecture == '32bit':
+                return 'launchwin-x86-console'
+            elif architecture == '64bit':
+                return 'launchwin-amd64-console'
         else:
-            raise Exception("Unrecognized architecture {} for windows".format(architecture))
+            if architecture == '32bit':
+                return 'launchwin-x86-window'
+            elif architecture == '64bit':
+                return 'launchwin-amd64-window'
+        raise Exception("Unrecognized architecture {} for windows".format(architecture))
     else:
         raise Exception("Unrecognized operating system")
 
-def make_dir(path, remove, verbose):
+def make_dir(path, remove):
     if remove and os.path.exists(path):
         LOGGER.debug('removing : %s', path)
         shutil.rmtree(path)
@@ -52,7 +57,7 @@ def make_dir(path, remove, verbose):
         os.mkdir(path)
 
 
-def extract(source_folder, source_file, destination_folder, verbose):
+def extract(source_folder, source_file, destination_folder):
     source = os.path.join(source_folder, source_file)
     LOGGER.debug('extracting %s to %s', source, destination_folder)
     extension = source_file[source_file.rfind('.')+1:]
@@ -70,13 +75,13 @@ def extract(source_folder, source_file, destination_folder, verbose):
         raise Exception('Unsupported file type {} (extension : {})'.format(source_file, extension))
 
 
-def tgz(source_dir, tgz_file_path, verbose):
+def tgz(source_dir, tgz_file_path):
     LOGGER.debug('tgz-ing %s (%s) to %s (%s)', source_dir, os.path.abspath(source_dir), tgz_file_path, os.path.abspath(tgz_file_path))
     with tarfile.open(tgz_file_path, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 
-def get(url, destination_folder, file_name, verbose):
+def get(url, destination_folder, file_name):
     destination_path = os.path.join(destination_folder, file_name)
     if os.path.exists(destination_path):
         LOGGER.info('using existing copy of %s from %s', file_name, os.path.abspath(destination_path))
@@ -92,11 +97,10 @@ def get(url, destination_folder, file_name, verbose):
     return True
 
 
-def rm_mk_tree(dir_path, verbose=False):
+def rm_mk_tree(dir_path):
     '''
     Clears out a dir.  Makes it if it doesn't exist.
     :param dir_path: dir to clear out
-    :param verbose: print debug messages
     :return: True on success
     '''
 
