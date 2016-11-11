@@ -51,11 +51,11 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
 
         # make pkg based installer
         pkgproj_path = self.application_name + '.pkgproj'
-        packages_path = os.path.join('usr', 'local', 'bin', 'packagesbuild')
+        packages_path = os.path.join(os.sep, 'usr', 'local', 'bin', 'packagesbuild')
         if not os.path.exists(packages_path):
             raise Exception((
                 'Packages tool could not be found (expected at {})'
-               'See http://s.sudre.free.fr/Software/Packages/about.html (Packages by Stéphane Sudre) for '
+                'See http://s.sudre.free.fr/Software/Packages/about.html (Packages by Stéphane Sudre) for '
                 'information on how to obtain the Packages tool.').format(packages_path))
         pkgproj_command = [packages_path, pkgproj_path]
         osnap.make_pkgproj.make_prkproj(self.application_name, pkgproj_path)
