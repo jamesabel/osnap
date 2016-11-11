@@ -1,5 +1,6 @@
 import os
 import subprocess
+import logging
 try:
     import pwd
 except ImportError:
@@ -9,6 +10,7 @@ import osnap.const
 import osnap.util
 import osnap.osnapy_base
 
+LOGGER = logging.getLogger(__name__)
 
 class OsnapyMac(osnap.osnapy_base.OsnapyBase):
 
