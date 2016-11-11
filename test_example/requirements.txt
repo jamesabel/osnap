@@ -1,2 +1,3 @@
+appdirs
 PyQt5
 cryptography
