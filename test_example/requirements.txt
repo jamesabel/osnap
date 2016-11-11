@@ -1,4 +1,2 @@
-appdirs
-jinja2
 PyQt5
 cryptography

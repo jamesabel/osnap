@@ -18,8 +18,9 @@ def make_installer(
         use_pyrun           = False,
         create_installer    = True,
         architecture        = '64bit',
-        variant             = 'console',
+        variant             = 'window',
         ):
+
     if osnap.util.is_mac():
         class_ = osnap.installer_mac.OsnapInstallerMac
     elif osnap.util.is_windows():
