@@ -30,7 +30,7 @@ def make_prkproj(application_name, pkgproj_path):
         sys.exit(s)
     template_file_path = locations.pop()
 
-    LOGGER.debug('using %s as template', emplate_file_path)
+    LOGGER.debug('using %s as template', template_file_path)
     with open(template_file_path) as template_file:
         template = Template(template_file.read())
         with open(pkgproj_path, 'w') as f:
