@@ -14,7 +14,8 @@ AUTHOR = 'abel'
 APPLICATION = 'osnap_launcher'
 PROGRAM = 'main.py'
 
-def find_osnapy(path_leaf, python_folder):
+
+def find_osnapy(path_leaf):
     """
     go up directory levels until we find our python interpreter
     this is necessary the way various operating systems (e.g. Mac) launch in a subdirectory (e.g. Contents/MacOS)
@@ -38,12 +39,13 @@ def find_osnapy(path_leaf, python_folder):
         path = os.path.dirname(path)
     raise Exception("Could not find osnapy in {}".format(path_leaf))
 
-def pick_osnapy(python_folder):
+
+def pick_osnapy():
     "Find the osnapy directory and chdir to it"
     LOGGER = logging.getLogger('osnap_launcher')
     for potential_path in [os.path.dirname(sys.argv[0]), os.getcwd()]:
         try:
-            osnapy_path = find_osnapy(potential_path, python_folder)
+            osnapy_path = find_osnapy(potential_path)
             parent = os.path.dirname(osnapy_path)
             os.chdir(parent)
             return
@@ -51,8 +53,9 @@ def pick_osnapy(python_folder):
             LOGGER.debug("%s", e)
     raise Exception("Unable to find any osnapy directories")
 
+
 def launch():
-    VERSION = '0.0.5'
+    VERSION = '0.0.6'
     LOGGER = logging.getLogger('osnap_launcher')
 
 
@@ -76,7 +79,7 @@ def launch():
     LOGGER.info('sys.argv : %s', sys.argv)
     LOGGER.info('original cwd : %s', os.getcwd())
 
-    pick_osnapy(python_folder)
+    pick_osnapy()
 
     if not os.path.exists(python_path):
         raise Exception('{} does not exist - exiting'.format(python_path))
