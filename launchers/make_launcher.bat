@@ -10,3 +10,5 @@ REM copy over to the test app so we can test the launcher out
 REM del /Q /S ..\test_example\launchwin
 REM mkdir ..\test_example\launchwin
 REM xcopy /S launchwin\*.* ..\test_example\launchwin
+del /Q ..\osnap\launchwin-amd64-window.zip
+move launchwin.zip ..\osnap\launchwin-amd64-window.zip
