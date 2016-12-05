@@ -1,4 +1,4 @@
-    
+
 # launch.pyw - a .pyw since we're launching without a console window
 import appdirs
 import glob
@@ -24,9 +24,8 @@ def find_osnapy(path_leaf):
     path = path_leaf
     while path != os.path.dirname(path):
         potential_path = os.path.join(path, 'osnapy')
-        if not os.path.exists(potential_path):
-            LOGGER.debug("No osnapy at %s", potential_path)
-        else:
+        LOGGER.debug("potential_path : %s" % potential_path)
+        if os.path.exists(potential_path):
             LOGGER.debug("Found osnapy at %s", potential_path)
             return potential_path
 
@@ -37,34 +36,39 @@ def find_osnapy(path_leaf):
                 LOGGER.debug("Found osnapy at %s", potential_path)
                 return potential_path
         path = os.path.dirname(path)
-    raise Exception("Could not find osnapy in {}".format(path_leaf))
+    return None
 
 
-def pick_osnapy():
+def pick_osnapy(python_folder):
     "Find the osnapy directory and chdir to it"
     LOGGER = logging.getLogger('osnap_launcher')
-    for potential_path in [os.path.dirname(sys.argv[0]), os.getcwd()]:
-        try:
-            osnapy_path = find_osnapy(potential_path)
-            parent = os.path.dirname(osnapy_path)
-            os.chdir(parent)
-            return
-        except Exception as e:
-            LOGGER.debug("%s", e)
-    raise Exception("Unable to find any osnapy directories")
+    potential_paths = []
+    if len(sys.argv) > 1:
+        # first, try the folder that contains our target
+        potential_paths.append(os.path.dirname(sys.argv[1]))
+    # next, try the folder that contains the launcher
+    potential_paths.append(os.path.dirname(sys.argv[0]))
+    # finally, try the folder we are starting from
+    potential_paths.append(os.getcwd())
+    LOGGER.debug('looking in %s' % potential_paths)
+    for potential_path in potential_paths:
+        osnapy_path = find_osnapy(potential_path)
+        if osnapy_path:
+            if os.path.exists(osnapy_path):
+                os.chdir(os.path.dirname(osnapy_path))
+                return
 
 
 def launch():
     VERSION = '0.0.6'
     LOGGER = logging.getLogger('osnap_launcher')
 
-
     # conventions
     python_folder = 'osnapy'
 
     if platform.system().lower()[0] == 'w':
         # windows
-        python_binary = 'python.exe'
+        python_binary = 'pythonw.exe'
         python_path = os.path.join(python_folder, python_binary)
 
     elif platform.system().lower()[0] == 'd':
@@ -79,7 +83,7 @@ def launch():
     LOGGER.info('sys.argv : %s', sys.argv)
     LOGGER.info('original cwd : %s', os.getcwd())
 
-    pick_osnapy()
+    pick_osnapy(python_folder)
 
     if not os.path.exists(python_path):
         raise Exception('{} does not exist - exiting'.format(python_path))
@@ -103,6 +107,7 @@ def launch():
     return_code = subprocess.call(call_parameters, env=env_vars, shell=True)
     LOGGER.info('return code : %s', return_code)
 
+
 def main():
     logfile = os.path.join(appdirs.user_log_dir(APPLICATION, AUTHOR), 'osnap_launcher.log')
     logdir = os.path.dirname(logfile)
@@ -123,7 +128,9 @@ def main():
         'handlers'          : {
             'console'       : {
                 'class'     : 'logging.StreamHandler',
-                'level'     : 'DEBUG',
+                # 'level' needs to be WARNING or above - if it's DEBUG Windows will try to make a log file for GUI apps,
+                # which is either an access error or pops up as an annoying dialog box.
+                'level'     : 'ERROR',
                 'formatter' : 'simple',
             },
             'file'          : {
