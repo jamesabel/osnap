@@ -26,5 +26,7 @@ See the documentation at `readthedocs <http://osnap.readthedocs.io/>`_ .
 
 Contributors
 ------------
+
 James Abel
+
 Eli Ribble
