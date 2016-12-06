@@ -6,6 +6,7 @@ import osnap.const
 import osnap.util
 import osnap.installer_mac
 import osnap.installer_win
+import osnap.check_version
 
 
 def make_installer(
@@ -20,6 +21,8 @@ def make_installer(
         architecture        = '64bit',
         variant             = 'window',
         ):
+
+    osnap.check_version.check_version('installer')
 
     if osnap.util.is_mac():
         class_ = osnap.installer_mac.OsnapInstallerMac
@@ -45,7 +48,7 @@ def make_installer(
 
 
 def main():
-    LOGGER = logging.getLogger()
+    LOGGER = logging.getLogger('installer')
 
     parser = argparse.ArgumentParser(description='create the osnap installer',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)

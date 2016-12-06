@@ -1,13 +1,13 @@
 
 import argparse
 import logging
-import requests
 
 import osnap.osnapy_win
 import osnap.osnapy_mac
 import osnap.osnapy_mac_pyrun
 import osnap.util
 import osnap.const
+import osnap.check_version
 
 LOGGER = logging.getLogger('osnapy')
 
@@ -20,13 +20,7 @@ def make_osnapy(
         architecture            = '64bit',
         ):
 
-    LOGGER.info('your osnap version : %s' % osnap.__version__)
-    r = requests.get('http://api.abel.co/osnap/version')
-    if r and r.status_code == 200:
-        pypi_version = r.text
-        LOGGER.info('PyPI osnap version : %s' % pypi_version)
-        if tuple(pypi_version.split('.')) > tuple(osnap.__version__.split('.')):
-            print('note: the latest osnap version is %s, your version is %s' % (pypi_version, osnap.__version__))
+    osnap.check_version.check_version('osnapy')
 
     LOGGER.debug('creating osnapy Python environment using python %s' % python_version)
     if osnap.util.is_mac() and application_name is None:

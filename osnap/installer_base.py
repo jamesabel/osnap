@@ -9,7 +9,7 @@ import site
 import osnap.const
 import osnap.util
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('installer')
 
 class OsnapInstaller:
     def __init__(self,
