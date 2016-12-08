@@ -40,9 +40,10 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         if os.path.exists(msvc_dir):
             for file_name in os.listdir(msvc_dir):
                 src = os.path.join(msvc_dir, file_name)
-                dest = os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir, file_name)
-                LOGGER.info('copying %s to %s' % (src, dest))
-                shutil.copy2(src, dest)
+                for dest_folder in [osnap.const.dist_dir, os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir)]:
+                    dest = os.path.join(dest_folder, file_name)
+                    LOGGER.info('copying %s to %s' % (src, dest))
+                    shutil.copy2(src, dest)
         else:
             LOGGER.warn(
                 'nothing in folder %s (%s) to copy over (no DLLs needed?)' % (msvc_dir, os.path.abspath(msvc_dir)))
