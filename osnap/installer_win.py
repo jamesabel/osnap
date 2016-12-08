@@ -20,6 +20,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         osnap.util.rm_mk_tree(osnap.const.dist_dir)
         osnap.util.rm_mk_tree('installers')
         self.unzip_launcher(osnap.const.dist_dir)
+
         distutils.dir_util.copy_tree(self.application_name, os.path.join(osnap.const.dist_dir,
                                                                          osnap.const.windows_app_dir,
                                                                          self.application_name))
@@ -33,6 +34,18 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
                 shutil.copy2(f, win_app_dir_path)
             else:
                 raise Exception('expected {} ({}) to exist but it does not'.format(f, os.path.abspath(f)))
+
+        # copy over any MSVC files (e.g. .dlls) needed
+        msvc_dir = 'msvc'
+        if os.path.exists(msvc_dir):
+            for file_name in os.listdir(msvc_dir):
+                src = os.path.join(msvc_dir, file_name)
+                dest = os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir, file_name)
+                LOGGER.info('copying %s to %s' % (src, dest))
+                shutil.copy2(src, dest)
+        else:
+            LOGGER.warn(
+                'nothing in folder %s (%s) to copy over (no DLLs needed?)' % (msvc_dir, os.path.abspath(msvc_dir)))
 
         # application .exe
         exe_name = self.application_name + '.exe'
