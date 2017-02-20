@@ -4,7 +4,7 @@ package_name = 'osnap'
 # this is the same as the launcher uses
 python_folder = 'osnapy'
 
-default_python_version = '3.5.2'
+default_python_version = '3.6.0'
 
 main_program_py = 'main.py'
 
