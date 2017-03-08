@@ -11,7 +11,7 @@ def main():
         setup(
             app=[WINDOW_APP],
             options={'py2app': {'dist_dir': util.get_launch_name(),
-                                'iconfile': 'circle.icns'}},
+                                'iconfile': 'icon.icns'}},
             setup_requires=['py2app'],
         )
     elif util.is_windows():
@@ -61,7 +61,7 @@ def main():
                 'py2exe': InstallCommand,
             },
             windows=[{
-                "icon_resources": [(1, "circle32x32.ico")],
+                "icon_resources": [(1, "icon32x32.ico")],
                 "script"        : WINDOW_APP,
             }],
             options={'py2exe' : {'dist_dir': util.get_launch_name()}},
