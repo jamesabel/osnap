@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-osnapy/bin/python3 main.py
+/Applications/test_example.app/Contents/MacOS/osnapy/bin/python3 main.py
