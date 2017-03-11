@@ -1,3 +1,5 @@
 appdirs
 PyQt5
 cryptography
+# regular osnap users would have osnap in requirements.txt but since this is our dev environment we install from our local copy
+# osnap
