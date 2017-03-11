@@ -45,7 +45,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
                     LOGGER.info('copying %s to %s' % (src, dest))
                     shutil.copy2(src, dest)
         else:
-            LOGGER.warn(
+            LOGGER.warning(
                 'nothing in folder %s (%s) to copy over (no DLLs needed?)' % (msvc_dir, os.path.abspath(msvc_dir)))
 
         # application .exe
