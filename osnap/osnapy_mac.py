@@ -12,6 +12,7 @@ import osnap.osnapy_base
 
 LOGGER = logging.getLogger(__name__)
 
+
 class OsnapyMac(osnap.osnapy_base.OsnapyBase):
 
     def pip(self, package):
