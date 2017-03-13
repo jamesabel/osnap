@@ -447,7 +447,7 @@
 				<key>CONCLUSION_ACTION</key>
 				<integer>0</integer>
 				<key>IDENTIFIER</key>
-				<string>com.abel.pkg.testexample</string>
+				<string>co.abel.test_example</string>
 				<key>NAME</key>
 				<string>test_example</string>
 				<key>OVERWRITE_PERMISSIONS</key>
@@ -456,7 +456,7 @@
 				<string>0.0</string>
 			</dict>
 			<key>UUID</key>
-			<string>EE332AF5-06F7-416D-AC06-CDD2BD543710</string>
+			<string>15d058e4-b22d-443c-ae6b-def1204844b0</string>
 		</dict>
 	</array>
 	<key>PROJECT</key>
