@@ -15,6 +15,7 @@ class OsnapInstaller:
     def __init__(self,
             python_version,
             application_name,
+            application_version,
             author,
             description,
             url,
@@ -24,16 +25,17 @@ class OsnapInstaller:
             architecture='64bit',
             variant='window',
             ):
-        self.application_name   = application_name
-        self.architecture       = architecture
-        self.author             = author
-        self.compile_code       = compile_code
-        self.create_installer   = create_installer
-        self.description        = description
-        self.python_version     = python_version
-        self.variant            = variant
-        self.url                = url
-        self.use_pyrun          = use_pyrun
+        self.application_name    = application_name
+        self.application_version = application_version
+        self.architecture        = architecture
+        self.author              = author
+        self.compile_code        = compile_code
+        self.create_installer    = create_installer
+        self.description         = description
+        self.python_version      = python_version
+        self.variant             = variant
+        self.url                 = url
+        self.use_pyrun           = use_pyrun
 
     def make_installer(self):
 
