@@ -13,6 +13,7 @@ import osnap.osnapy_base
 
 LOGGER = logging.getLogger(__name__)
 
+
 class OsnapyWin(osnap.osnapy_base.OsnapyBase):
 
     def create_python(self):
@@ -73,8 +74,5 @@ class OsnapyWin(osnap.osnapy_base.OsnapyBase):
         cmd_str = ' '.join(cmd)
         LOGGER.debug('executing %s', cmd_str)
         return subprocess.check_call(cmd_str, shell=True)
-
-
-
 
 
