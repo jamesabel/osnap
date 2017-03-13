@@ -25,6 +25,4 @@ class OsnapyBase():
         "Create a full, stand-alone python installation with the required packages"
         raise NotImplementedError  # derived class provides this
 
-    def add_package(self, package):
-        raise NotImplementedError  # derived class provides this
 
