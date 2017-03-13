@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 import site
+import uuid
 
 import osnap.const
 import osnap.util
@@ -11,7 +12,8 @@ from jinja2 import Template
 
 LOGGER = logging.getLogger()
 
-def make_prkproj(application_name, pkgproj_path):
+
+def make_pkgproj(application_name, reverse_dns_identifier, pkgproj_path):
 
     # find Packages project file
     template_file = 'template.pkgproj'
@@ -34,4 +36,6 @@ def make_prkproj(application_name, pkgproj_path):
     with open(template_file_path) as template_file:
         template = Template(template_file.read())
         with open(pkgproj_path, 'w') as f:
-            f.write(template.render(application_name=application_name))
+            f.write(template.render(application_name=application_name,
+                                    reverse_dns_identifier=reverse_dns_identifier,
+                                    uuid=str(uuid.uuid4())))
