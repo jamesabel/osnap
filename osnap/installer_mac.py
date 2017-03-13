@@ -63,7 +63,7 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
                 'so it should be fixed for any program you plan on distributing.' % (src, os.path.abspath(src)))
 
         # fix up the keys in the Info.plist file
-        self._info_plist_substitute(os.path.join(dist_app_path, 'Contents', 'Info.plist'))
+        reverse_dns_identifier = self._info_plist_substitute(os.path.join(dist_app_path, 'Contents', 'Info.plist'))
 
         os.chmod(os.path.join(macos_path, 'launch'), 0o777)
 
@@ -87,7 +87,7 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
                 'See http://s.sudre.free.fr/Software/Packages/about.html (Packages by Stéphane Sudre) for '
                 'information on how to obtain the Packages tool.').format(packages_path))
         pkgproj_command = [packages_path, pkgproj_path]
-        osnap.make_pkgproj.make_prkproj(self.application_name, pkgproj_path)
+        osnap.make_pkgproj.make_pkgproj(self.application_name, reverse_dns_identifier, pkgproj_path)
         pkgproj_command = ' '.join(pkgproj_command)
         LOGGER.debug('Executing %s' % pkgproj_command)
         subprocess.check_call(pkgproj_command, shell=True)
@@ -98,11 +98,16 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
         LOGGER.info('fixing up %s' % info_plist_path)
         tree = ElementTree.parse(info_plist_path)
         translations = {}
-        url_fields = self.url.split('.')
+
         # reverse-DNS format
+        url_fields = self.url.split('.')
+        if len(url_fields) != 3:
+            LOGGER.error('URL %s improperly formatted - must be x.y.z' % self.url)
+        reverse_dns_identifier = '%s.%s.%s' % (url_fields[-1], url_fields[-2], self.application_name)
+
         translations['CFBundleName'] = self.application_name
         translations['CFBundleDisplayName'] = self.application_name
-        translations['CFBundleIdentifier'] = '%s.%s.%s' % (url_fields[-1], url_fields[-2], self.application_name)
+        translations['CFBundleIdentifier'] = reverse_dns_identifier
         translations['CFBundleVersion'] = self.application_version
         translations['CFBundleShortVersionString'] = self.application_version
         translations['CFBundleSignature'] = url_fields[-2][0:4].upper()
@@ -125,3 +130,5 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
         with open(info_plist_path, 'w') as f:
             f.write(ElementTree.tostring(tree, xml_declaration=True, pretty_print=True, encoding='UTF-8',
                                          doctype=doctype).decode())
+
+        return reverse_dns_identifier
