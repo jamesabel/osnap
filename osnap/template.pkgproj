@@ -447,7 +447,7 @@
 				<key>CONCLUSION_ACTION</key>
 				<integer>0</integer>
 				<key>IDENTIFIER</key>
-				<string>com.abel.pkg.testexample</string>
+				<string>{{ reverse_dns_identifier }}</string>
 				<key>NAME</key>
 				<string>{{ application_name }}</string>
 				<key>OVERWRITE_PERMISSIONS</key>
@@ -456,7 +456,7 @@
 				<string>0.0</string>
 			</dict>
 			<key>UUID</key>
-			<string>EE332AF5-06F7-416D-AC06-CDD2BD543710</string>
+			<string>{{ uuid }}</string>
 		</dict>
 	</array>
 	<key>PROJECT</key>
