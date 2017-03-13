@@ -12,6 +12,7 @@ import osnap.const
 
 LOGGER = logging.getLogger(__name__)
 
+
 def is_windows():
     return platform.system().lower()[0] == 'w'
 
