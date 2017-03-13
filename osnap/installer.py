@@ -12,6 +12,7 @@ import osnap.check_version
 def make_installer(
         python_version,
         application_name,
+        application_version,
         author              = '',
         description         = '',
         url                 = '',
@@ -34,6 +35,7 @@ def make_installer(
     installer = class_(
         python_version,
         application_name,
+        application_version,
         author,
         description,
         url,
