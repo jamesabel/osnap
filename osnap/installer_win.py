@@ -13,6 +13,7 @@ import osnap.installer_base
 
 LOGGER = logging.getLogger(__name__)
 
+
 class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
     def make_installer(self):
