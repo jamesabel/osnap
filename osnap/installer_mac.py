@@ -4,6 +4,8 @@ import subprocess
 import shutil
 import distutils.dir_util
 
+import lxml.etree as ElementTree
+
 import osnap.const
 import osnap.util
 import osnap.installer_base
@@ -60,6 +62,9 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
                 'This will work for one program but MacOS will not install more than one program with the same icon\n'
                 'so it should be fixed for any program you plan on distributing.' % (src, os.path.abspath(src)))
 
+        # fix up the keys in the Info.plist file
+        self._info_plist_substitute(os.path.join(dist_app_path, 'Contents', 'Info.plist'))
+
         os.chmod(os.path.join(macos_path, 'launch'), 0o777)
 
         # make dmg
@@ -88,3 +93,35 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
         subprocess.check_call(pkgproj_command, shell=True)
 
         # todo: delete the osnapy in /Applications (actually the entire /Applications/<application_name>.app )
+
+    def _info_plist_substitute(self, info_plist_path):
+        LOGGER.info('fixing up %s' % info_plist_path)
+        tree = ElementTree.parse(info_plist_path)
+        translations = {}
+        url_fields = self.url.split('.')
+        # reverse-DNS format
+        translations['CFBundleName'] = self.application_name
+        translations['CFBundleDisplayName'] = self.application_name
+        translations['CFBundleIdentifier'] = '%s.%s.%s' % (url_fields[-1], url_fields[-2], self.application_name)
+        translations['CFBundleVersion'] = self.application_version
+        translations['CFBundleShortVersionString'] = self.application_version
+        translations['CFBundleSignature'] = url_fields[-2][0:4].upper()
+        translations['NSHumanReadableCopyright'] = 'Copyright %s' % self.author
+        next_translation = None
+        for elem in tree.getiterator():
+            if elem.tag == 'key' and elem.text in translations:
+                next_translation = elem.text
+            elif next_translation and elem.tag == 'string':
+                LOGGER.debug('replaced', elem.tag, elem.text, translations[next_translation])
+                elem.text = translations[next_translation]
+                next_translation = None
+        if False:
+            for ds in tree.iterfind('dict'):
+                print(ds.findtext('dict'))
+                for d in ds:
+                    print(d.findtext('key'))
+
+        doctype = '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">'
+        with open(info_plist_path, 'w') as f:
+            f.write(ElementTree.tostring(tree, xml_declaration=True, pretty_print=True, encoding='UTF-8',
+                                         doctype=doctype).decode())
