@@ -102,7 +102,7 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
         # reverse-DNS format
         url_fields = self.url.split('.')
         if len(url_fields) != 3:
-            LOGGER.error('URL %s improperly formatted - must be x.y.z' % self.url)
+            LOGGER.error('URL "%s" improperly formatted - must be x.y.z' % self.url)
         reverse_dns_identifier = '%s.%s.%s' % (url_fields[-1], url_fields[-2], self.application_name)
 
         translations['CFBundleName'] = self.application_name

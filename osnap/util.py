@@ -51,16 +51,16 @@ def get_launch_name(architecture, variant):
 
 def make_dir(path, remove):
     if remove and os.path.exists(path):
-        LOGGER.debug('removing : %s', path)
+        LOGGER.debug('removing : %s' % path)
         shutil.rmtree(path)
     if not os.path.exists(path):
-        LOGGER.debug('making folder : %s', path)
+        LOGGER.debug('making folder : %s' % path)
         os.mkdir(path)
 
 
 def extract(source_folder, source_file, destination_folder):
     source = os.path.join(source_folder, source_file)
-    LOGGER.debug('extracting %s to %s', source, destination_folder)
+    LOGGER.debug('extracting %s to %s' % (source, destination_folder))
     extension = source_file[source_file.rfind('.')+1:]
     if extension == 'zip':
         with zipfile.ZipFile(source) as zf:
@@ -77,7 +77,7 @@ def extract(source_folder, source_file, destination_folder):
 
 
 def tgz(source_dir, tgz_file_path):
-    LOGGER.debug('tgz-ing %s (%s) to %s (%s)', source_dir, os.path.abspath(source_dir), tgz_file_path, os.path.abspath(tgz_file_path))
+    LOGGER.debug('tgz-ing %s (%s) to %s (%s)' % (source_dir, os.path.abspath(source_dir), tgz_file_path, os.path.abspath(tgz_file_path)))
     with tarfile.open(tgz_file_path, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
@@ -85,9 +85,9 @@ def tgz(source_dir, tgz_file_path):
 def get(url, destination_folder, file_name):
     destination_path = os.path.join(destination_folder, file_name)
     if os.path.exists(destination_path):
-        LOGGER.info('using existing copy of %s from %s', file_name, os.path.abspath(destination_path))
+        LOGGER.info('using existing copy of %s from %s' % (file_name, os.path.abspath(destination_path)))
     else:
-        LOGGER.info('get %s to %s', url, destination_path)
+        LOGGER.info('get %s to %s' % (url, destination_path))
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(destination_path, 'wb') as out_file:
