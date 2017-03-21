@@ -73,10 +73,16 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         nsis_defines['EXENAME'] = exe_name
         nsis_defines['DESCRIPTION'] = '"' + self.description + '"'  # the description must be in quotes
 
-        v = self.python_version.split('.')
-        nsis_defines['VERSIONMAJOR'] = v[0]
-        nsis_defines['VERSIONMINOR'] = v[1]
-        nsis_defines['VERSIONBUILD'] = v[2]
+        v = self.application_version.split('.')
+        if len(v) != 3:
+            LOGGER.error('version string "%s" does not adhere to the x.y.z format' % self.application_version)
+            nsis_defines['VERSIONMAJOR'] = '0'
+            nsis_defines['VERSIONMINOR'] = '0'
+            nsis_defines['VERSIONBUILD'] = '0'
+        else:
+            nsis_defines['VERSIONMAJOR'] = v[0]
+            nsis_defines['VERSIONMINOR'] = v[1]
+            nsis_defines['VERSIONBUILD'] = v[2]
 
         # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
         # It is possible to use "mailto:" links in here to open the email client
