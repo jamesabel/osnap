@@ -1,5 +1,11 @@
 appdirs
 PyQt5
 cryptography
+#
+# some packages seem to have a problem if spec'd as a dependency in osnap so install it here as a workaround for now
+lxml
+jinja2
+requests
+#
 # regular osnap users would have osnap in requirements.txt but since this is our dev environment we install from our local copy
 # osnap
