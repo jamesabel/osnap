@@ -37,6 +37,7 @@ def make_osnapy(
     osnapy.create_python()
     osnapy.pip('pip')
     osnapy.pip('setuptools')
+    osnapy.pip('Cython')  # e.g. for kivy
     osnapy.pip(None)  # install all from requirements.txt
 
 
