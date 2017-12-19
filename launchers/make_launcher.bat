@@ -1,3 +1,6 @@
+REM launch.py is the real file, but we need launch.pyw for windows versions so just create a link
+del /Q launch.pyw
+mklink /H launch.pyw launch.py
 REM you may want to turn off your virus scanner for this
 REM for some reason I have seen py2exe fail if the virus scanner is running
 del /Q /S launchwin

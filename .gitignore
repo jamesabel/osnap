@@ -189,3 +189,6 @@ readme.md
 osnapp
 
 build_*
+
+# windows launcher is just a hard link to the regular (console) launcher code so do not put the windows version in repo
+launchers/launch.pyw

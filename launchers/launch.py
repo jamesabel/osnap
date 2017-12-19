@@ -1,5 +1,8 @@
 
-# launch.pyw - a .pyw since we're launching without a console window
+# This file exists under 2 names.  The 'real' one is launch.py.
+# launch.pyw is a hard link to launch.py
+# (launch.pyw - a .pyw since we're launching without a console window)
+
 import appdirs
 import glob
 import logging
