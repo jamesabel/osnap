@@ -1,12 +1,12 @@
 import argparse
-import logging
 import platform
 
-import osnap.const
+from osnap import default_python_version, get_logger, init_logger_from_args, __application_name__
 import osnap.util
 import osnap.installer_mac
 import osnap.installer_win
-import osnap.check_version
+
+LOGGER = get_logger(__application_name__)
 
 
 def make_installer(
@@ -22,8 +22,6 @@ def make_installer(
         architecture        = '64bit',
         variant             = 'window',
         ):
-
-    osnap.check_version.check_version('installer')
 
     if osnap.util.is_mac():
         class_ = osnap.installer_mac.OsnapInstallerMac
@@ -50,7 +48,6 @@ def make_installer(
 
 
 def main():
-    LOGGER = logging.getLogger('installer')
 
     parser = argparse.ArgumentParser(description='create the osnap installer',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -60,7 +57,7 @@ def main():
         "Only produce the binary of the script as an executable without creating an installer. This avoids the NSIS requirement on windows"
     ))
     parser.add_argument('-c', '--console', action='store_true', default=False, help="Use a console for the application")
-    parser.add_argument('-p', '--python_version', default=osnap.const.default_python_version, help='python version')
+    parser.add_argument('-p', '--python_version', default=default_python_version, help='python version')
     parser.add_argument('-e', '--egenix_pyrun', action='store_true', default=False, help='use eGenix™ PyRun™')
     parser.add_argument('-n', '--name_of_author', default='', help='author name')
     parser.add_argument('-d', '--description', default='', help='application description')
@@ -68,11 +65,7 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='print more verbose messages')
     args = parser.parse_args()
 
-    if args.verbose:
-        logging.basicConfig(level=logging.DEBUG)
-        logging.getLogger().debug('Verbose mode on')
-    else:
-        logging.basicConfig(level=logging.INFO)
+    init_logger_from_args(args)
 
     try:
         make_installer(
@@ -89,6 +82,7 @@ def main():
         )
     except Exception as e:
         LOGGER.exception("Fatal error: %s", e)
+
 
 if __name__ == '__main__':
     main()

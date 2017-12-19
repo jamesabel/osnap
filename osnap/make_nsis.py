@@ -2,12 +2,11 @@
 import os
 import datetime
 import string
-import logging
 
-import osnap.const
-import osnap.util
+from osnap import windows_app_dir, __application_name__, get_logger
 
-LOGGER = logging.getLogger(__name__)
+
+LOGGER = get_logger(__application_name__)
 
 
 class MakeNSIS:
@@ -138,7 +137,7 @@ class MakeNSIS:
         self.write_line('rmDir "$SMPROGRAMS\\${COMPANYNAME}"')
 
         self.write_line('# Remove files')
-        self.write_line('RMDir /r $INSTDIR\\%s' % osnap.const.windows_app_dir)  # all the user files should be here
+        self.write_line('RMDir /r $INSTDIR\\%s' % windows_app_dir)  # all the user files should be here
         # use these patterns so that we delete the uninstaller last
         self.write_line('delete $INSTDIR\\LICENSE')
         self.write_line('delete $INSTDIR\\COPY')  # for GPL

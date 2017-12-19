@@ -1,15 +1,15 @@
-import logging
+
 import os
 import py_compile
 import fnmatch
 import zipfile
-import sys
 import site
 
-import osnap.const
+from osnap import python_folder, __application_name__, get_logger
 import osnap.util
 
-LOGGER = logging.getLogger('installer')
+LOGGER = get_logger(__application_name__)
+
 
 class OsnapInstaller:
     def __init__(self,
@@ -44,7 +44,7 @@ class OsnapInstaller:
         # code (e.g. it's been installed into a read-only area), we have this option.
         if self.compile_code:
             LOGGER.debug('compiling')
-            for root, dirnames, filenames in os.walk(osnap.const.python_folder):
+            for root, dirnames, filenames in os.walk(python_folder):
                 for filename in fnmatch.filter(filenames, '*.py'):
                     path = os.path.join(root, filename)
                     # special case: don't compile Python 2 code from PyQt

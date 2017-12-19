@@ -1,4 +1,4 @@
-import logging
+
 import os
 import subprocess
 import shutil
@@ -6,13 +6,13 @@ import distutils.dir_util
 
 import lxml.etree as ElementTree
 
-import osnap.const
+from osnap import dist_dir, main_program_py, get_logger, __application_name__
 import osnap.util
 import osnap.installer_base
 import osnap.make_pkgproj
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__application_name__)
 
 
 class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
@@ -20,11 +20,11 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
     def make_installer(self):
         super().make_installer()
 
-        osnap.util.rm_mk_tree(osnap.const.dist_dir)
-        self.unzip_launcher(osnap.const.dist_dir)
-        dist_app_path = os.path.join(osnap.const.dist_dir, self.application_name + '.app')
+        osnap.util.rm_mk_tree(dist_dir)
+        self.unzip_launcher(dist_dir)
+        dist_app_path = os.path.join(dist_dir, self.application_name + '.app')
         # the launcher app in the zip is a generic name of 'launch.app' - rename it to our app's name
-        os.rename(os.path.join(osnap.const.dist_dir, 'launch.app'), dist_app_path)
+        os.rename(os.path.join(dist_dir, 'launch.app'), dist_app_path)
 
         macos_path = os.path.join(dist_app_path, 'Contents', 'MacOS')
 
@@ -36,7 +36,7 @@ class OsnapInstallerMac(osnap.installer_base.OsnapInstaller):
             else:
                 LOGGER.warning('%s does not exist' % d)
 
-        for f in [osnap.const.main_program_py]:
+        for f in [main_program_py]:
             LOGGER.info('copying %s to %s' % (f, macos_path))
             if os.path.exists(f):
                 shutil.copy2(f, macos_path)

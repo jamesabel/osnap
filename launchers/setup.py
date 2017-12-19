@@ -5,6 +5,7 @@ import util
 WINDOW_APP = 'launch.pyw'
 CONSOLE_APP = 'launch.py'
 
+
 def main():
     if util.is_mac():
         from setuptools import setup
@@ -69,6 +70,7 @@ def main():
         )
     else:
         raise NotImplementedError
+
 
 if __name__ == '__main__':
     main()

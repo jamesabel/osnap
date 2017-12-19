@@ -1,16 +1,17 @@
+
 import os
 import subprocess
-import logging
+
 try:
     import pwd
 except ImportError:
     pass
 
-import osnap.const
+from osnap import get_logger, __application_name__, TEMP_FOLDER, CACHE_FOLDER
 import osnap.util
 import osnap.osnapy_base
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__application_name__)
 
 
 class OsnapyMac(osnap.osnapy_base.OsnapyBase):
@@ -35,9 +36,9 @@ class OsnapyMac(osnap.osnapy_base.OsnapyBase):
 
         LOGGER.debug('running as "%s"', pwd.getpwuid(os.getuid())[0])
 
-        root_dir = osnap.const.TEMP_FOLDER
+        root_dir = TEMP_FOLDER
         base_dir = os.path.join(root_dir, 'build_osx')
-        cache_dir = os.path.join(root_dir, osnap.const.CACHE_FOLDER)
+        cache_dir = os.path.join(root_dir, CACHE_FOLDER)
         logs_dir = os.path.abspath('logs')
         application_dir = osnap.util.get_application_dir(self.application_name)
         prefix_dir = osnap.util.get_osnapy_path_in_application_dir(self.application_name)

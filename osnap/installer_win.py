@@ -1,35 +1,35 @@
-import logging
+
 import os
 import shutil
 import collections
 import subprocess
 import distutils.dir_util
 
-import osnap.const
+from osnap import dist_dir, windows_app_dir, python_folder, main_program_py, get_logger, __application_name__
 import osnap.util
 import osnap.make_nsis
 import osnap.installer_base
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__application_name__)
 
 
 class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
     def make_installer(self):
 
-        osnap.util.rm_mk_tree(osnap.const.dist_dir)
+        osnap.util.rm_mk_tree(dist_dir)
         osnap.util.rm_mk_tree('installers')
-        self.unzip_launcher(osnap.const.dist_dir)
+        self.unzip_launcher(dist_dir)
 
-        distutils.dir_util.copy_tree(self.application_name, os.path.join(osnap.const.dist_dir,
-                                                                         osnap.const.windows_app_dir,
+        distutils.dir_util.copy_tree(self.application_name, os.path.join(dist_dir,
+                                                                         windows_app_dir,
                                                                          self.application_name))
-        distutils.dir_util.copy_tree(osnap.const.python_folder,
-                                     os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir,
-                                                  osnap.const.python_folder))
-        win_app_dir_path = os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir)
-        for f in [osnap.const.main_program_py]:
+        distutils.dir_util.copy_tree(python_folder,
+                                     os.path.join(dist_dir, windows_app_dir,
+                                                  python_folder))
+        win_app_dir_path = os.path.join(dist_dir, windows_app_dir)
+        for f in [main_program_py]:
             LOGGER.debug('copying %s to %s', f, win_app_dir_path)
             if os.path.exists(f):
                 shutil.copy2(f, win_app_dir_path)
@@ -41,7 +41,7 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         if os.path.exists(msvc_dir):
             for file_name in os.listdir(msvc_dir):
                 src = os.path.join(msvc_dir, file_name)
-                for dest_folder in [osnap.const.dist_dir, os.path.join(osnap.const.dist_dir, osnap.const.windows_app_dir)]:
+                for dest_folder in [dist_dir, os.path.join(dist_dir, windows_app_dir)]:
                     dest = os.path.join(dest_folder, file_name)
                     LOGGER.info('copying %s to %s' % (src, dest))
                     shutil.copy2(src, dest)
@@ -51,14 +51,14 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
 
         # application .exe
         exe_name = self.application_name + '.exe'
-        orig_launch_exe_path = os.path.join(osnap.const.dist_dir, 'launch.exe')
-        dist_exe_path = os.path.join(osnap.const.dist_dir, exe_name)
+        orig_launch_exe_path = os.path.join(dist_dir, 'launch.exe')
+        dist_exe_path = os.path.join(dist_dir, exe_name)
         LOGGER.debug('moving %s to %s', orig_launch_exe_path, dist_exe_path)
         os.rename(orig_launch_exe_path, dist_exe_path)
 
         # support files
         for f in [self.application_name + '.ico', 'LICENSE']:
-            shutil.copy2(f, osnap.const.dist_dir)
+            shutil.copy2(f, dist_dir)
 
         # write NSIS script
         if not self.create_installer:
@@ -94,9 +94,9 @@ class OsnapInstallerWin(osnap.installer_base.OsnapInstaller):
         nsis = osnap.make_nsis.MakeNSIS(nsis_defines, nsis_file_name)
         nsis.write_all()
 
-        shutil.copy(nsis_file_name, osnap.const.dist_dir)
+        shutil.copy(nsis_file_name, dist_dir)
 
-        os.chdir(osnap.const.dist_dir)
+        os.chdir(dist_dir)
 
         nsis_path = os.path.join('c:', os.sep, 'Program Files (x86)', 'NSIS', 'makensis.exe')
         if os.path.exists(nsis_path):

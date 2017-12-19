@@ -1,4 +1,4 @@
-import logging
+
 import platform
 import os
 import shutil
@@ -8,9 +8,9 @@ import time
 
 import requests
 
-import osnap.const
+from osnap import __application_name__, get_logger
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger(__application_name__)
 
 
 def is_windows():

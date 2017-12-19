@@ -1,16 +1,16 @@
-import logging
+
 import os
 import sys
 import site
 import uuid
 
-import osnap.const
+from osnap import __application_name__, get_logger
 import osnap.util
 
 from jinja2 import Template
 
 
-LOGGER = logging.getLogger()
+LOGGER = get_logger(__application_name__)
 
 
 def make_pkgproj(application_name, reverse_dns_identifier, pkgproj_path):
