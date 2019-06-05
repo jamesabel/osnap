@@ -1,6 +1,8 @@
 requests
 sphinx
-twine
 jinja2
 lxml
 appdirs
+wheel
+twine
+keyring
