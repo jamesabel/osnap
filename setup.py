@@ -20,7 +20,7 @@ setup(
 
     packages=[application_name],
     install_requires=[
-        'requests', 'jinja2', 'lxml'
+        'appdirs', 'requests', 'jinja2', 'lxml'
     ],
     classifiers=[]
 )

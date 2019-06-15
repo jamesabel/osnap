@@ -1,6 +1,6 @@
 
 # PEP 440 compliant semver (https://semver.org/)
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 __application_name__ = 'osnap'
 package_name = __application_name__
