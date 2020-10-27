@@ -1,3 +1,6 @@
+Note: osnap has been superceeded by pyship.  See http://www.pyship.org
+======================================================================
+
 osnap - Overly Simplistic Native Application tool for Python
 ============================================================
 
